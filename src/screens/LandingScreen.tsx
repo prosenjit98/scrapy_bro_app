@@ -27,12 +27,12 @@ const LandingScreen = () => {
     setLoading(false);
   };
 
-  if (isLoading || loading){
+  if (isLoading || loading) {
     return <Splash />;
   }
-    
 
-  return(
+
+  return (
     <RootStack.Navigator screenOptions={{ headerShown: false }}>
       {isFirstLaunch ? (
         <RootStack.Screen name="OnboardingStack" component={OnboardingStack} />

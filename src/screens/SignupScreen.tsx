@@ -13,8 +13,8 @@ import { useSignup } from '@/stores/hooks/useSignup'
 
 type SignupFormType = z.infer<typeof signupSchema>
 
-const SignupScreen = () => {
-  const { control, handleSubmit, formState } = useForm<SignupFormType>({
+const SignupScreen = ({ navigation }: any) => {
+  const { control, handleSubmit } = useForm<SignupFormType>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
       fullName: '',
@@ -32,7 +32,7 @@ const SignupScreen = () => {
 
   const onSubmit = (data: SignupFormType) => {
     const { confirmPassword, ...payload } = data
-    const dataNew = {...payload, role: 'user' as 'user' | 'vendor' }
+    const dataNew = { ...payload, role: 'user' as 'user' | 'vendor' }
     console.log('✅ Form submitted:', dataNew)
     mutate(dataNew)
   }
@@ -51,9 +51,9 @@ const SignupScreen = () => {
 
       <TextField control={control} name="confirmPassword" label="ReType Password" secureTextEntry />
 
-      <TextField control={control} name="phoneNumber" label="Phone Number" keyboardType="numeric"/>
+      <TextField control={control} name="phoneNumber" label="Phone Number" keyboardType="numeric" />
 
-      <TextField control={control} name="address" label="address" multiline/>
+      <TextField control={control} name="address" label="address" multiline />
 
       {/* <SelectField
         control={control}
@@ -74,6 +74,15 @@ const SignupScreen = () => {
 
       <Button mode="contained" onPress={handleSubmit(onSubmit)} loading={isPending} style={{ marginTop: 16 }}>
         Sign Up
+      </Button>
+      <Button
+        mode="text"
+        onPress={() => {
+          navigation.navigate('Login')
+        }}
+        style={{ marginTop: 8 }}
+      >
+        Back to login
       </Button>
     </ScrollView>
   )

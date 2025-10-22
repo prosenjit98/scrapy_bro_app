@@ -1,58 +1,72 @@
 import React from 'react';
-import { View } from 'react-native';
-import { TextInput, Button, Text } from 'react-native-paper';
-import { useForm, Controller } from 'react-hook-form';
-import { useMutation } from '@tanstack/react-query';
-import { loginApi } from '@/api/auth';
-import { useAuthStore } from '@/stores/authStore';
+import { Image, ScrollView, StyleSheet } from 'react-native';
+import { Button, Text } from 'react-native-paper';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { TextField } from '@/components/form/TextField';
+import { LoginSchema } from '@/validation/authSchemas';
+import { useSignin } from '@/stores/hooks/useSignin';
+import { useThemeStore } from '@/stores/themeStore';
+import { AppTheme } from '@/theme';
 
-type LoginForm = { email: string; password: string };
 
-export default function LoginScreen({ navigation }: any) {
-  const login = useAuthStore((s) => s.login);
+type LoginForm = z.infer<typeof LoginSchema>;
+
+const LoginScreen = ({ navigation }: any) => {
+  const theme = useThemeStore().theme;
+  const { colors } = theme;
+  // @ts-ignore
+  const styles = makeStyles(colors);
+
+  const { mutate, isPending } = useSignin();
+
   const { control, handleSubmit } = useForm<LoginForm>({
-    defaultValues: { email: '', password: '' },
+    resolver: zodResolver(LoginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
   });
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: (data: LoginForm) => loginApi(data.email, data.password),
-    onSuccess: (data: UserResponse) => login({user: data.user, token: data.token?.token}),
-    onError: (error: any) => console.log(error?.message)
-  });
-
-  const onSubmit = handleSubmit((data) => mutate(data));
+  const onSubmit = (data: LoginForm) => {
+    mutate(data);
+  };
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', padding: 16 }}>
-      <Text variant="headlineMedium">Login</Text>
-
-      <Controller
-        control={control}
-        name="email"
-        render={({ field: { onChange, value } }) => (
-          <TextInput label="Email" value={value} onChangeText={onChange} style={{ marginVertical: 8 }} mode="outlined"/>
-        )}
+    <ScrollView contentContainerStyle={styles.container}>
+      <Image
+        source={require('@/assets/images/splash_logo.png')}
+        style={{ width: 100, height: 100, resizeMode: 'contain', alignSelf: 'center' }}
       />
+      <Text variant="headlineMedium" style={{ textAlign: 'center', marginBottom: 20 }}> Welcome To Scrapy </Text>
+      <TextField control={control} name="email" label="Email" keyboardType="email-address" />
+      <TextField control={control} name="password" label="Password" secureTextEntry />
 
-      <Controller
-        control={control}
-        name="password"
-        render={({ field: { onChange, value } }) => (
-          <TextInput
-            label="Password"
-            secureTextEntry
-            value={value}
-            onChangeText={onChange}
-            style={{ marginVertical: 8 }}
-            mode="outlined"
-          />
-        )}
-      />
-
-      <Button mode="contained" loading={isPending} onPress={onSubmit}>
+      <Button mode="contained" onPress={handleSubmit(onSubmit)} loading={isPending} style={{ marginTop: 16 }}>
         Login
       </Button>
-      <Button onPress={() => navigation.navigate('Signup')}>Go to Signup</Button>
-    </View>
+      <Button
+        mode="text"
+        onPress={() => {
+          navigation.navigate('Signup')
+        }}
+        style={{ marginTop: 8 }}
+      >
+        Don’t have an account? Sign up
+      </Button>
+    </ScrollView>
   );
-}
+};
+
+const makeStyles = (_colors: AppTheme['colors']) =>
+  StyleSheet.create({
+    container: {
+      flexGrow: 1,
+      padding: 24,
+      justifyContent: 'center',
+      backgroundColor: _colors.background,
+    }
+  })
+
+export default LoginScreen

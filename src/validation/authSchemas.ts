@@ -1,10 +1,5 @@
 import { z } from 'zod'
 
-export const loginSchema = z.object({
-  email: z.email('Enter a valid email'),
-  password: z.string().min(6, 'Minimum 6 characters required'),
-})
-
 export const signupSchema = z.object({
   fullName: z.string().trim().min(2, { message: 'Name must be at least 2 characters' }),
   email: z.email({ message: 'Invalid email address' }).trim().toLowerCase(),
@@ -18,3 +13,8 @@ export const signupSchema = z.object({
   message: 'Passwords do not match',
   path: ['confirmPassword'],
 })
+
+export const LoginSchema = z.object({
+  email: z.email('Invalid email').trim().toLowerCase(),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+});

@@ -5,6 +5,9 @@ interface User {
   role?: "user" | "vendor" | null | undefined;
   address?: string;
   phoneNumber: string;
+  profilePicture?: {
+    url?: string
+  }
 }
 
 interface UserResponse {

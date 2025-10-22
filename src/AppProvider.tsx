@@ -4,6 +4,7 @@ import { PaperProvider } from 'react-native-paper';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useThemeStore } from '@/stores/themeStore';
 import LandingScreen from './screens/LandingScreen';
+import { AppSnackbar } from './components/AppSnackbar';
 
 const queryClient = new QueryClient();
 
@@ -15,6 +16,7 @@ export default function AppProvider() {
       <PaperProvider theme={theme}>
         <NavigationContainer>
           <LandingScreen />
+          <AppSnackbar />
         </NavigationContainer>
       </PaperProvider>
     </QueryClientProvider>

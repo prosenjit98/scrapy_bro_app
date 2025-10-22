@@ -12,8 +12,7 @@ const OnboardingScreen = () => {
   const { checkFirstLaunch } = useAuthStore()
   const theme = useThemeStore().theme;
   const { colors } = theme;
-  console.log('theme', colors)
-  console.log(colors.yellowBackground)
+
   // @ts-ignore
   const styles = makeStyles(colors);
 
@@ -29,8 +28,8 @@ const OnboardingScreen = () => {
       pages={[
         {
           backgroundColor: '#FFEE5D',
-          image: <FastImage source={require('@/assets/images/onboarding_first.gif')} 
-            style={styles.image} 
+          image: <FastImage source={require('@/assets/images/onboarding_first.gif')}
+            style={styles.image}
             resizeMode={FastImage.resizeMode.contain}
           />,
           title: 'Welcome to Scrapy',
@@ -38,13 +37,13 @@ const OnboardingScreen = () => {
         },
         {
           backgroundColor: '#FFEE5D',
-          image: <Image source={require('@/assets/images/software_tester.gif')} style={styles.image} resizeMode={FastImage.resizeMode.contain}/>,
+          image: <Image source={require('@/assets/images/software_tester.gif')} style={styles.image} resizeMode={FastImage.resizeMode.contain} />,
           title: 'Find Parts Easily',
           subtitle: 'Search, filter, and connect with verified sellers for the exact parts you need.',
         },
         {
           backgroundColor: '#FFEE5D',
-          image: <FastImage source={require('@/assets/images/Onboarding_last.gif')} style={styles.image} resizeMode={FastImage.resizeMode.contain}/>,
+          image: <FastImage source={require('@/assets/images/Onboarding_last.gif')} style={styles.image} resizeMode={FastImage.resizeMode.contain} />,
           title: 'Join the Community',
           subtitle: 'Start trading today and be part of the eco-friendly automotive marketplace!',
         },

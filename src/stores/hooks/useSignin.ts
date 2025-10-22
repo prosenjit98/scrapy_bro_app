@@ -1,15 +1,15 @@
 import { useMutation } from '@tanstack/react-query'
-import { signupApi } from '@/api/auth'
+import { loginApi } from '@/api/auth'
 import { useAuthStore } from '../authStore';
 import { useSnackbarStore } from './useSnackbarStore';
 
 
-export const useSignup = () => {
+export const useSignin = () => {
   const login = useAuthStore((s) => s.login);
   const showSnackbar = useSnackbarStore((s) => s.showSnackbar)
 
   return useMutation({
-    mutationFn: signupApi,
+    mutationFn: loginApi,
     onSuccess: (data: UserResponse) => {
       if (data?.token) {
         login({ token: data.token.token, user: data.user })
