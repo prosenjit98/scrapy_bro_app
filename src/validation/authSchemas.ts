@@ -18,3 +18,10 @@ export const LoginSchema = z.object({
   email: z.email('Invalid email').trim().toLowerCase(),
   password: z.string().min(6, 'Password must be at least 6 characters'),
 });
+
+export const ProfileSchema = z.object({
+  fullName: z.string().trim().min(2, 'Name must be at least 2 characters'),
+  email: z.email('Invalid email').trim().toLowerCase(),
+  phoneNumber: z.string().min(10, { message: 'Phone number must be at least 10 digits' }),
+  address: z.string().optional(),
+})

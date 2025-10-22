@@ -5,6 +5,7 @@ import { NavigatorScreenParams } from '@react-navigation/native';
 export type RootStackParamList = {
   Root: NavigatorScreenParams<TabParamList>;
   [strings.my_profile]: undefined;
+  [strings.profile_edit]: { type: string; id?: number | string | undefined };
 }
 
 export type TabParamList = {

@@ -12,6 +12,7 @@ type AuthState = {
   hydrate: () => Promise<void>;
   isFirstLaunch: boolean;
   checkFirstLaunch: () => Promise<void>;
+  setUser: (user: User) => Promise<void>;
 };
 
 export const useAuthStore = create<AuthState>()(
@@ -34,6 +35,9 @@ export const useAuthStore = create<AuthState>()(
         const parsed = saved ? JSON.parse(saved) : null;
         if (parsed?.state?.token) setAuthToken(parsed.state.token);
         set({ isLoading: false });
+      },
+      setUser: async (user) => {
+        set({ user: user })
       },
       checkFirstLaunch: async () => {
         const hasLaunched = await AsyncStorage.getItem('hasLaunched')

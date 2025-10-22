@@ -2,8 +2,7 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { ActivityIndicator } from 'react-native-paper';
-// import { skipToken } from '@tanstack/react-query';
-import { useAuthStore } from '@/stores/authStore';
+import { useProfile } from '@/stores/hooks/useProfile';
 
 const DefaultImage: React.FC<{ size: number }> = ({ size }) => (
   <FastImage
@@ -15,25 +14,26 @@ const DefaultImage: React.FC<{ size: number }> = ({ size }) => (
 
 const ProfileImage = React.memo((props: { size: number }) => {
   const { size } = props;
-  const { user } = useAuthStore();
+  const { profileQuery } = useProfile();
+  const { data: profile, isLoading } = profileQuery()
   const [imageError, setImageError] = React.useState(false);
-  const [isLoading, setLoading] = React.useState(false);
+  const [isFetching, setLoading] = React.useState(false);
   // const { data: profile } = useGetProfileQuery({ id: user?.code, email: user?.email } || skipToken);
 
   return (
     <>
-      {user?.profilePicture && !imageError ? (
+      {profile?.profilePicture?.file?.url && !imageError ? (
         <View>
           <ActivityIndicator
             style={{ position: 'absolute', top: size / 2 - 12, left: size / 2 - 12, zIndex: 10 }}
             size="small"
-            animating={isLoading}
+            animating={isLoading || isFetching}
             color="red"
           />
           <FastImage
             style={{ width: size, height: size, borderRadius: size / 2 }}
             source={{
-              uri: user.profilePicture.url,
+              uri: profile?.profilePicture?.file?.url,
               priority: FastImage.priority.high,
             }}
             resizeMode={FastImage.resizeMode.cover}

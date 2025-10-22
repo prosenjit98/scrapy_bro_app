@@ -1,12 +1,13 @@
 import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import HomeScreen from '@/screens/HomeScreen'
-import ProfileScreen from '@/screens/ProfileScreen'
-import { home, my_orders, my_profile } from '@/constants'
+import ProfileScreen from '@/screens/Profile/ProfileScreen'
+import { home, my_orders, my_profile, profile_edit } from '@/constants'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { RootStackParamList } from '@/types/navigation'
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons'
 import { useThemeStore } from '@/stores/themeStore'
+import EditProfileScreen from '@/screens/Profile/EditProfileScreen'
 
 const Tab = createBottomTabNavigator()
 const MainStack = createNativeStackNavigator<RootStackParamList>();
@@ -40,6 +41,7 @@ const MainAppStack = () => (
   <MainStack.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
     <MainStack.Screen name="Root" component={TabStack} />
     <MainStack.Screen name={my_profile} component={ProfileScreen} />
+    <MainStack.Screen name={profile_edit} component={EditProfileScreen} />
   </MainStack.Navigator>
 )
 
