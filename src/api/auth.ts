@@ -6,9 +6,9 @@ export const loginApi = (email: string, password: string) =>
     body: JSON.stringify({ email, password }),
   });
 
-export const signupApi = (email: string, password: string) =>
+export const signupApi = (data: User) =>
   apiClient('/signup', {
     method: 'POST',
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify(data),
   });
 

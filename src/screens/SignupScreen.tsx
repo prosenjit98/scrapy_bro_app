@@ -1,56 +1,82 @@
-import React from 'react';
-import { View } from 'react-native';
-import { TextInput, Button, Text } from 'react-native-paper';
-import { useForm, Controller } from 'react-hook-form';
-import { useMutation } from '@tanstack/react-query';
-import { signupApi } from '@/api/auth';
-import { useAuthStore } from '@/stores/authStore';
+import React from 'react'
+import { View, ScrollView } from 'react-native'
+import { Button, Text } from 'react-native-paper'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
 
-type SignupForm = { email: string; password: string };
+import { TextField, CheckboxField } from '@/components/form'
+import { signupSchema } from '@/validation/authSchemas'
+import { useSignup } from '@/stores/hooks/useSignup'
 
-export default function SignupScreen({ navigation }: any) {
-  const login = useAuthStore((s) => s.login);
-  const { control, handleSubmit } = useForm<SignupForm>({
-    defaultValues: { email: '', password: '' },
-  });
+// ✅ Define Zod schema
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: (data: SignupForm) => signupApi(data.email, data.password),
-    onSuccess: (data) => login(data.token),
-  });
+type SignupFormType = z.infer<typeof signupSchema>
 
-  const onSubmit = handleSubmit((data) => mutate(data));
+const SignupScreen = () => {
+  const { control, handleSubmit, formState } = useForm<SignupFormType>({
+    resolver: zodResolver(signupSchema),
+    defaultValues: {
+      fullName: '',
+      email: '',
+      password: '',
+      phoneNumber: undefined,
+      address: '',
+      confirmPassword: '',
+      role: 'user',
+      agree: false,
+    },
+  })
+
+  const { mutate, isPending } = useSignup()
+
+  const onSubmit = (data: SignupFormType) => {
+    const { confirmPassword, ...payload } = data
+    const dataNew = {...payload, role: 'user' as 'user' | 'vendor' }
+    console.log('✅ Form submitted:', dataNew)
+    mutate(dataNew)
+  }
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', padding: 16 }}>
-      <Text variant="headlineMedium">Signup</Text>
+    <ScrollView contentContainerStyle={{ padding: 20 }}>
+      <Text variant="headlineMedium" style={{ marginBottom: 16 }}>
+        Create Account
+      </Text>
 
-      <Controller
+      <TextField control={control} name="fullName" label="Full Name" />
+
+      <TextField control={control} name="email" label="Email" />
+
+      <TextField control={control} name="password" label="Password" secureTextEntry />
+
+      <TextField control={control} name="confirmPassword" label="ReType Password" secureTextEntry />
+
+      <TextField control={control} name="phoneNumber" label="Phone Number" keyboardType="numeric"/>
+
+      <TextField control={control} name="address" label="address" multiline/>
+
+      {/* <SelectField
         control={control}
-        name="email"
-        render={({ field: { onChange, value } }) => (
-          <TextInput label="Email" value={value} onChangeText={onChange} style={{ marginVertical: 8 }} />
-        )}
+        name="role"
+        label="Select Role"
+        multiple
+        searchable
+        options={[
+          { label: 'Buyer', value: 'buyer' },
+          { label: 'Seller', value: 'seller' },
+        ]}
       />
+      {formState.errors.role && (
+        <Text style={{ color: 'red', marginBottom: 8 }}>{formState.errors.role.message}</Text>
+      )} */}
 
-      <Controller
-        control={control}
-        name="password"
-        render={({ field: { onChange, value } }) => (
-          <TextInput
-            label="Password"
-            secureTextEntry
-            value={value}
-            onChangeText={onChange}
-            style={{ marginVertical: 8 }}
-          />
-        )}
-      />
+      <CheckboxField control={control} name="agree" label="I agree to the terms and conditions" />
 
-      <Button mode="contained" loading={isPending} onPress={onSubmit}>
-        Signup
+      <Button mode="contained" onPress={handleSubmit(onSubmit)} loading={isPending} style={{ marginTop: 16 }}>
+        Sign Up
       </Button>
-      <Button onPress={() => navigation.navigate('Login')}>Go to Login</Button>
-    </View>
-  );
+    </ScrollView>
+  )
 }
+
+export default SignupScreen

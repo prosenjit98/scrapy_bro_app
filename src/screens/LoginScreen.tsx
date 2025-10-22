@@ -30,7 +30,7 @@ export default function LoginScreen({ navigation }: any) {
         control={control}
         name="email"
         render={({ field: { onChange, value } }) => (
-          <TextInput label="Email" value={value} onChangeText={onChange} style={{ marginVertical: 8 }} />
+          <TextInput label="Email" value={value} onChangeText={onChange} style={{ marginVertical: 8 }} mode="outlined"/>
         )}
       />
 
@@ -44,6 +44,7 @@ export default function LoginScreen({ navigation }: any) {
             value={value}
             onChangeText={onChange}
             style={{ marginVertical: 8 }}
+            mode="outlined"
           />
         )}
       />

@@ -42,11 +42,11 @@ export const theme = {
   colors: {
     ...CombinedDefaultTheme.colors,
     cardShadow: '#E5FFEC',
-    primary: '#4FC16E',
-    primaryLight: '#EDF9F0',
-    primaryDark: '369151',
+    primary: '#6935c4ff',
+    primaryLight: '#cbaaffff',
+    primaryDark: '#492b85ff',
 
-    primaryBackground: '#e2e2e2',
+    primaryBackground: '#f5f8c4ff',
     primaryLightBackground: '#F7F7F8',
 
     yellowBackground: '#FFEE5D',
@@ -54,8 +54,8 @@ export const theme = {
     text: '#242120',
     mutedText: '#6C6C89',
 
-    secondary: '#369151',
-    secondaryLight: '#399e57',
+    secondary: '#a23fdbff',
+    secondaryLight: '#c795f3ff',
 
     error: '#E9315D',
     errorLight: '#FFEFF3',

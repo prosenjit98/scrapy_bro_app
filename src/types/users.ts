@@ -1,10 +1,10 @@
 interface User {
-  id: number;
-  full_name: string;
+  id?: number;
+  fullName: string;
   email: string;
-  role: string;
+  role?: "user" | "vendor" | null | undefined;
   address?: string;
-  phoneNumber?: string;
+  phoneNumber: string;
 }
 
 interface UserResponse {

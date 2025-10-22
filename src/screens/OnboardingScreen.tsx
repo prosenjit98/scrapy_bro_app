@@ -3,17 +3,18 @@ import { Image, View, Text, StyleSheet } from 'react-native'
 import { useAuthStore } from '@/stores/authStore'
 import Onboarding from 'react-native-onboarding-swiper'
 import FastImage from 'react-native-fast-image'
-import { MD3Colors } from 'react-native-paper/lib/typescript/types'
-import { AppTheme, useAppTheme } from '@/theme'
+import { AppTheme } from '@/theme'
 import { SCREEN_WIDTH } from '@/constants'
+import { useThemeStore } from '@/stores/themeStore'
 
 
 const OnboardingScreen = () => {
   const { checkFirstLaunch } = useAuthStore()
-  const theme = useAppTheme();
+  const theme = useThemeStore().theme;
   const { colors } = theme;
   console.log('theme', colors)
   console.log(colors.yellowBackground)
+  // @ts-ignore
   const styles = makeStyles(colors);
 
   const handleDone = async () => {
