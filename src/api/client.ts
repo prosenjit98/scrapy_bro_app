@@ -1,5 +1,6 @@
 import { API_URL } from "@/constants";
 import { useSnackbarStore } from "@/stores/hooks/useSnackbarStore";
+import useLoaderState from "@/stores/loaderState";
 import axios from "axios";
 
 export const BASE_URL = 'http://10.0.2.2:3333/api/v1';
@@ -48,16 +49,21 @@ apiClientAxios.interceptors.request.use(
 
 // ✅ Global error handler
 apiClientAxios.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    useLoaderState.getState().hide();
+    return response
+  },
   (error) => {
     const showSnackbar = useSnackbarStore.getState().showSnackbar
     if (error.response) {
+      useLoaderState.getState().hide();
       const message =
         error.response.data?.message ||
         error.response.data?.error ||
         'Something went wrong'
       showSnackbar(message, 'error')
     } else {
+      useLoaderState.getState().hide();
       showSnackbar('Network error. Please check your connection.', 'error')
     }
     return Promise.reject(error)

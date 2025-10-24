@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useThemeStore } from '@/stores/themeStore';
 import LandingScreen from './screens/LandingScreen';
 import { AppSnackbar } from './components/AppSnackbar';
+import Loader from './components/Loader';
 
 const queryClient = new QueryClient();
 
@@ -17,6 +18,7 @@ export default function AppProvider() {
         <NavigationContainer>
           <LandingScreen />
           <AppSnackbar />
+          <Loader />
         </NavigationContainer>
       </PaperProvider>
     </QueryClientProvider>

@@ -54,8 +54,11 @@ export const theme = {
     text: '#242120',
     mutedText: '#6C6C89',
 
-    secondary: '#a23fdbff',
-    secondaryLight: '#c795f3ff',
+    secondary: '#1cad09ff',
+    secondaryLight: '#58fb18ff',
+
+    thirdMain: '#e1ec0cff',
+    thirdMainLight: '#f7f9eaff',
 
     error: '#E9315D',
     errorLight: '#FFEFF3',
@@ -85,8 +88,8 @@ export const darkTheme = {
 
     yellowBackground: '#f9ed7dff',
 
-    secondary: '#28723e',
-    secondaryLight: '#369151',
+    secondary: '#fff823ff',
+    secondaryLight: '#e8ed79ff',
 
     text: '#E6E6E6',
     mutedText: '#6C6C89',
@@ -95,6 +98,9 @@ export const darkTheme = {
     errorLight: '#633c45',
 
     accentLight: '#EFFFF8',
+
+    thirdMain: '#e1ec0cff',
+    thirdMainLight: '#f7f9eaff',
 
     background: '#000', //'#161C24',
     secondaryBackground: '#1C1C1E',

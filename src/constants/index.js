@@ -9,6 +9,10 @@ export const my_profile = 'Profile';
 export const my_orders = 'Orders'
 export const inquiry = 'Inquiry'
 export const profile_edit = 'EditProfile'
+export const my_inquiries = 'MyInquiryList'
+export const my_inquiry_details = 'MyInquiryDetails'
+export const new_inquiry = 'NewInquiry'
+export const inquiries = 'Inquires'
 
 
 export const SCREEN_WIDTH = Dimensions.get('window').width

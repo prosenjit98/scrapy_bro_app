@@ -13,6 +13,7 @@ export const useProfile = () => {
     return useQuery({
       queryKey: ['profile'],
       queryFn: user?.id ? () => getProfile({ id: user.id! }) : skipToken,
+      staleTime: Infinity
       // select: (data) => {
       //   console.log(data)
       //   setUser(data)

@@ -14,7 +14,7 @@ import {
 
 type Option = {
   label: string
-  value: string
+  value: string | number
 }
 
 type Props = {
@@ -53,9 +53,9 @@ export const SelectField = ({
         const selectedValues = multiple ? (value || []) : value
         const selectedLabels = multiple
           ? options
-              .filter((opt) => selectedValues?.includes(opt.value))
-              .map((o) => o.label)
-              .join(', ')
+            .filter((opt) => selectedValues?.includes(opt.value))
+            .map((o) => o.label)
+            .join(', ')
           : options.find((opt) => opt.value === value)?.label || ''
 
         return (
@@ -127,7 +127,7 @@ export const SelectField = ({
                 {/* Option List */}
                 <FlatList
                   data={filteredOptions}
-                  keyExtractor={(item) => item.value}
+                  keyExtractor={(item) => item.value.toString()}
                   renderItem={({ item }) => {
                     const selected = multiple
                       ? selectedValues?.includes(item.value)
