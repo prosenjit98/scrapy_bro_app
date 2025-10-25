@@ -6,6 +6,7 @@ import { useRoute } from '@react-navigation/native'
 import MyLayout from '@/components/MyLayout'
 import { useThemeStore } from '@/stores/themeStore'
 import { useInquiries } from '@/stores/hooks/useInquiries'
+import InquirySkeleton from '@/components/inquiry/InquirySkeleton'
 
 export const InquiryDetailScreen = () => {
   const theme = useThemeStore().theme
@@ -16,83 +17,85 @@ export const InquiryDetailScreen = () => {
 
   return (
     <MyLayout withBackButton={true} hasProfileLink={true} moduleName={'Inquiry Details'} handleRefetch={refetch} rendering={isPending}>
-      {inquiry &&
-        <Card style={styles.card}>
-          <Card.Title
-            title={inquiry.user?.fullName || 'Anonymous'}
-            subtitle={dayjs(inquiry.createdAt).format('MMM D, YYYY')}
-            left={() => (
-              <Avatar.Image
-                size={42}
-                source={
-                  // inquiry.user?.avatar
-                  //   ? { uri: inquiry.user.avatar }
-                  //   : 
-                  require('@/assets/images/avatar.png')
-                }
-              />
-            )}
-          />
-          <Card.Content>
-            <Text variant="titleLarge" style={styles.title}>
-              {inquiry.title}
-            </Text>
-            <Text
-              variant="bodyMedium"
-              style={[styles.description, { color: theme.colors.onSurfaceVariant }]}
-            >
-              {inquiry.partDescription}
-            </Text>
-
-            {inquiry?.attachments && inquiry?.attachments?.length > 0 && (
-              <View style={styles.imageGrid}>
-                {inquiry.attachments.map((file, i: number) => (
-                  <Image key={i} source={{ uri: file.file.url }} style={styles.image} />
-                ))}
-              </View>
-            )}
-          </Card.Content>
-        </Card>
-      }
-
-      <Divider style={{ marginVertical: 16 }} />
-      <Text variant="titleMedium" style={{ marginBottom: 8 }}>
-        Vendor Proposals
-      </Text>
-
-      {inquiry?.proposals && inquiry.proposals?.length > 0 ? (
-        inquiry.proposals.map((p: any, i: number) => (
-          <Card key={i} style={{ marginBottom: 10 }}>
+      {inquiry ?
+        <>
+          <Card style={styles.card}>
             <Card.Title
-              title={p.vendor?.name || 'Vendor'}
-              subtitle={`Offer: ₹${p.price}`}
+              title={inquiry.user?.fullName || 'Anonymous'}
+              subtitle={dayjs(inquiry.createdAt).format('MMM D, YYYY')}
               left={() => (
                 <Avatar.Image
-                  size={36}
+                  size={42}
                   source={
-                    p.vendor?.avatar
-                      ? { uri: p.vendor.avatar }
-                      : require('@/assets/images/avatar.png')
+                    // inquiry.user?.avatar
+                    //   ? { uri: inquiry.user.avatar }
+                    //   : 
+                    require('@/assets/images/avatar.png')
                   }
                 />
               )}
             />
             <Card.Content>
-              <Text>{p.message}</Text>
+              <Text variant="titleLarge" style={styles.title}>
+                {inquiry.title}
+              </Text>
+              <Text
+                variant="bodyMedium"
+                style={[styles.description, { color: theme.colors.onSurfaceVariant }]}
+              >
+                {inquiry.partDescription}
+              </Text>
+
+              {inquiry?.attachments && inquiry?.attachments?.length > 0 && (
+                <View style={styles.imageGrid}>
+                  {inquiry.attachments.map((file, i: number) => (
+                    <Image key={i} source={{ uri: file.file.url }} style={styles.image} />
+                  ))}
+                </View>
+              )}
             </Card.Content>
           </Card>
-        ))
-      ) : (
-        <Text>No proposals yet.</Text>
-      )}
 
-      <Button
-        mode="contained"
-        style={{ marginTop: 16 }}
-        onPress={() => console.log('Chat / Proposal action')}
-      >
-        Message Vendor
-      </Button>
+
+          <Divider style={{ marginVertical: 16 }} />
+          <Text variant="titleMedium" style={{ marginBottom: 8 }}>
+            Vendor Proposals
+          </Text>
+
+          {inquiry?.proposals && inquiry.proposals?.length > 0 ? (
+            inquiry.proposals.map((p: any, i: number) => (
+              <Card key={i} style={{ marginBottom: 10 }}>
+                <Card.Title
+                  title={p.vendor?.name || 'Vendor'}
+                  subtitle={`Offer: ₹${p.price}`}
+                  left={() => (
+                    <Avatar.Image
+                      size={36}
+                      source={
+                        p.vendor?.avatar
+                          ? { uri: p.vendor.avatar }
+                          : require('@/assets/images/avatar.png')
+                      }
+                    />
+                  )}
+                />
+                <Card.Content>
+                  <Text>{p.message}</Text>
+                </Card.Content>
+              </Card>
+            ))
+          ) : (
+            <Text>No proposals yet.</Text>
+          )}
+
+          <Button
+            mode="contained"
+            style={{ marginTop: 16 }}
+            onPress={() => console.log('Chat / Proposal action')}
+          >
+            Message Vendor
+          </Button>
+        </> : <InquirySkeleton />}
     </MyLayout>
   )
 }
