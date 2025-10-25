@@ -5,6 +5,7 @@ import {
   createInquiry,
   updateInquiry,
   deleteInquiry,
+  fetchMyInquiry,
 } from '@/api/inquiryService'
 import { useSnackbarStore } from './useSnackbarStore'
 
@@ -16,6 +17,14 @@ export const useInquiries = () => {
     queryKey: ['my-inquiries'],
     queryFn: fetchMyInquiries,
   })
+
+  const getInquiry = (id: number) => {
+    return useQuery({
+      queryKey: ['my-inquiry', id],
+      queryFn: () => fetchMyInquiry(id),
+      enabled: !!id,
+    })
+  }
 
   const createMutation = (successCallback: () => void) => {
 
@@ -51,5 +60,5 @@ export const useInquiries = () => {
     onError: () => showSnackbar('Failed to delete inquiry', 'error'),
   })
 
-  return { inquiriesQuery, createMutation, updateMutation, deleteMutation }
+  return { inquiriesQuery, createMutation, updateMutation, deleteMutation, getInquiry }
 }

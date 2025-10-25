@@ -1,10 +1,13 @@
-// src/services/inquiryService.ts
 import apiClientAxios from './client'
 
 export const fetchMyInquiries = async () => {
-  const { data } = await apiClientAxios.get('/inquiries')
-  console.log(data.data)
+  const { data } = await apiClientAxios.get('/inquiries?withAttachment=1')
   return data.data
+}
+
+export const fetchMyInquiry = async (id: number) => {
+  const { data } = await apiClientAxios.get(`/inquiries/${id}`)
+  return data.data as Inquiry
 }
 
 export const createInquiry = async (formData: FormData) => {

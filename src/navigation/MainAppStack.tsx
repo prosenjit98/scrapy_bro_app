@@ -10,6 +10,7 @@ import { useThemeStore } from '@/stores/themeStore'
 import EditProfileScreen from '@/screens/Profile/EditProfileScreen'
 import MyInquiryScreen from '@/screens/MyInquiries/MyInquiryScreen'
 import InquiryFormScreen from '@/screens/MyInquiries/InquiryFormScreen'
+import InquiryDetailScreen from '@/screens/MyInquiries/InquiryDetailScreen'
 
 const Tab = createBottomTabNavigator()
 const MainStack = createNativeStackNavigator<RootStackParamList>();
@@ -22,7 +23,7 @@ function tabBarIcon(name: any): ((props: { focused: boolean; color: string; size
 const InquiryStack = () => (
   <Inquiry.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
     <Inquiry.Screen name={my_inquiries} component={MyInquiryScreen} />
-    <Inquiry.Screen name={my_inquiry_details} component={MyInquiryScreen} />
+    <Inquiry.Screen name={my_inquiry_details} component={InquiryDetailScreen} />
     <Inquiry.Screen name={new_inquiry} component={InquiryFormScreen} />
   </Inquiry.Navigator>
 )

@@ -1,0 +1,3 @@
+interface Proposal {
+  vendorName: string
+}
