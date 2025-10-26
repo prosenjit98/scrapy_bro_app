@@ -134,7 +134,7 @@ export const InquiryCard: React.FC<InquiryCardProps> = ({
 
         <Card.Actions style={styles.actions}>
           <IconButton icon="message-outline" size={20} />
-          <Text>{1} Proposals</Text>
+          <Text>{inquiry.proposalsCount ?? 0} Proposals</Text>
         </Card.Actions>
       </Card>
     </TouchableOpacity>

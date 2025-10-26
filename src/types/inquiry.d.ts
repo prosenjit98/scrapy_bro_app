@@ -18,6 +18,7 @@ interface Inquiry {
   make: Make;
   model: Model;
   proposals: Proposal[]
+  proposalsCount: number
 }
 
 interface Make {
