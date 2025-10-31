@@ -1,11 +1,12 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Button, Text } from 'react-native-paper';
+import { Button, FAB, Text } from 'react-native-paper';
 import { useAuthStore } from '@/stores/authStore';
 import { useThemeStore } from '@/stores/themeStore';
 import MyLayout from '@/components/MyLayout';
+import { vendor_root } from '@/constants';
 
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }: any) {
   const logout = useAuthStore((s) => s.logout);
   const { toggleTheme, mode } = useThemeStore();
 
@@ -21,6 +22,15 @@ export default function HomeScreen() {
           Switch to {mode === 'light' ? 'Dark' : 'Light'} Mode
         </Button>
       </View>
+      <FAB
+        icon="switch"
+        style={{
+          position: 'absolute',
+          right: 16,
+          bottom: 16,
+        }}
+        onPress={() => navigation.navigate(vendor_root)}
+      />
     </MyLayout>
 
   );

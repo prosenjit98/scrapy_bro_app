@@ -7,6 +7,8 @@ import MyLayout from '@/components/MyLayout'
 import { useThemeStore } from '@/stores/themeStore'
 import { useInquiries } from '@/stores/hooks/useInquiries'
 import InquirySkeleton from '@/components/inquiry/InquirySkeleton'
+import UserProposalListScreen from '../Proposals/UserProposalListScreen'
+import { useUserProposals } from '@/stores/hooks/useProposals'
 
 export const InquiryDetailScreen = () => {
   const theme = useThemeStore().theme
@@ -14,9 +16,15 @@ export const InquiryDetailScreen = () => {
   const { inquiryId } = route.params as { inquiryId: number }
   const { getInquiry } = useInquiries()
   const { isPending, data: inquiry, refetch } = getInquiry(inquiryId)
+  const { refetch: refetchUserProposal } = useUserProposals(inquiryId)
+
+  const handleRefetch = () => {
+    refetch()
+    refetchUserProposal()
+  }
 
   return (
-    <MyLayout withBackButton={true} hasProfileLink={true} moduleName={'Inquiry Details'} handleRefetch={refetch} rendering={isPending}>
+    <MyLayout withBackButton={true} hasProfileLink={true} moduleName={'Inquiry Details'} handleRefetch={handleRefetch} rendering={isPending}>
       {inquiry ?
         <>
           <Card style={styles.card}>
@@ -62,7 +70,7 @@ export const InquiryDetailScreen = () => {
             Vendor Proposals
           </Text>
 
-          {inquiry?.proposals && inquiry.proposals?.length > 0 ? (
+          {/* {inquiry?.proposals && inquiry.proposals?.length > 0 ? (
             inquiry.proposals.map((p: any, i: number) => (
               <Card key={i} style={{ marginBottom: 10 }}>
                 <Card.Title
@@ -86,15 +94,16 @@ export const InquiryDetailScreen = () => {
             ))
           ) : (
             <Text>No proposals yet.</Text>
-          )}
+          )} */}
+          <UserProposalListScreen inquiryId={inquiryId} />
 
-          <Button
+          {/* <Button
             mode="contained"
             style={{ marginTop: 16 }}
             onPress={() => console.log('Chat / Proposal action')}
           >
             Message Vendor
-          </Button>
+          </Button> */}
         </> : <InquirySkeleton />}
     </MyLayout>
   )

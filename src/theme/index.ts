@@ -45,6 +45,8 @@ export const theme = {
     primary: '#6935c4ff',
     primaryLight: '#cbaaffff',
     primaryDark: '#492b85ff',
+    vendorPrimary: '#1cad09ff',
+    vendorPrimaryLight: '#5cf049ff',
 
     primaryBackground: '#f5f8c4ff',
     primaryLightBackground: '#F7F7F8',
@@ -85,6 +87,9 @@ export const darkTheme = {
     primaryLight: '#E5FFEC33',
     primaryBackground: '#161C24',
     primaryLightBackground: '#E5FFEC33',
+
+    vendorPrimary: '#1cad09ff',
+    vendorPrimaryLight: '#5cf049ff',
 
     yellowBackground: '#f9ed7dff',
 
