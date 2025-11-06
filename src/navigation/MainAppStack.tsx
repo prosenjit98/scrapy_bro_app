@@ -72,9 +72,9 @@ const TabStack = () => {
       tabBarHideOnKeyboard: true,
     }}>
       <Tab.Screen name={home} component={HomeScreen} options={{ tabBarIcon: tabBarIcon('home') }} />
-      <Tab.Screen name={inquiries} component={InquiryStack} options={{ tabBarIcon: tabBarIcon('book') }} />
-      <Tab.Screen name={bargaining} component={ProposalListScreen} options={{ tabBarIcon: tabBarIcon('book') }} />
-      <Tab.Screen name={my_orders} component={HomeScreen} options={{ tabBarIcon: tabBarIcon('book') }} />
+      <Tab.Screen name={inquiries} component={InquiryStack} options={{ tabBarIcon: tabBarIcon('clipboard-list') }} />
+      <Tab.Screen name={bargaining} component={ProposalListScreen} options={{ tabBarIcon: tabBarIcon('file-star-four-points') }} />
+      <Tab.Screen name={my_orders} component={HomeScreen} options={{ tabBarIcon: tabBarIcon('credit-card-clock') }} />
     </Tab.Navigator>
   )
 }

@@ -6,7 +6,7 @@ export const fetchProposals = async () => {
 }
 
 export const fetchMyProposal = async (id: number) => {
-  const { data } = await apiClientAxios.get(`/proposals/${id}`)
+  const { data } = await apiClientAxios.get(`/proposals/${id}?withComments=1`)
   return data.data as Proposal
 }
 
@@ -26,5 +26,12 @@ export const updateProposal = async ({ id, formData }: any) => {
 
 export const deleteProposal = async (id: string) => {
   const { data } = await apiClientAxios.delete(`/proposals/${id}`)
+  return data.data
+}
+
+export const createComment = async ({ id, formData }: any) => {
+  const { data } = await apiClientAxios.post(`/proposals/${id}/comments`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
   return data.data
 }

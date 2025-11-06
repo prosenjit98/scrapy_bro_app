@@ -22,6 +22,8 @@ interface OptionsStr {
 
 interface Comment {
   id: number;
-  message: string;
+  content: string;
+  userId: number;
+  createdAt: string;
   commenter: { id: number, fullName: string }
 }

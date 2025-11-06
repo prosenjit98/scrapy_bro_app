@@ -1,5 +1,5 @@
 import apiClientAxios from '@/api/client'
-import { fetchMyProposal } from '@/api/proposalService'
+import { createComment, fetchMyProposal } from '@/api/proposalService'
 import { buildUrl } from '@/utility/commonFunction'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
@@ -57,5 +57,13 @@ export const useUpdateProposal = () => {
       return res.data.data
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['proposals_vendor'] }),
+  })
+}
+
+export const useCreateComment = ({ proposalId }: any) => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: createComment,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['proposal_by_id', proposalId] }),
   })
 }

@@ -23,7 +23,7 @@ export default function HomeScreen({ navigation }: any) {
         </Button>
       </View>
       <FAB
-        icon="switch"
+        icon="fast-forward"
         style={{
           position: 'absolute',
           right: 16,

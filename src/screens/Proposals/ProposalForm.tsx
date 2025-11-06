@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { TextField } from '@/components/form/TextField'
 import { useSnackbarStore } from '@/stores/hooks/useSnackbarStore'
 import { useCreateProposal, useUpdateProposal } from '@/stores/hooks/useProposals'
+import { proposalSchema } from '@/validation/proposalSchemas'
 
 interface ProposalFormProps {
   inquiryId: number;
@@ -13,15 +14,12 @@ interface ProposalFormProps {
   onSuccess: () => void;
 }
 
-const schema = z.object({
-  amount: z.string().min(1, 'Amount required'),
-  message: z.string().optional(),
-})
+export type proposalSchemaType = z.infer<typeof proposalSchema>
 
 export const ProposalForm: React.FC<ProposalFormProps> = ({ inquiryId, proposal, onSuccess }) => {
   const showSnackbar = useSnackbarStore.getState().showSnackbar
-  const { control, handleSubmit, reset } = useForm({
-    resolver: zodResolver(schema),
+  const { control, handleSubmit, reset } = useForm<proposalSchemaType>({
+    resolver: zodResolver(proposalSchema),
     defaultValues: proposal || { amount: '', message: '' },
   })
 

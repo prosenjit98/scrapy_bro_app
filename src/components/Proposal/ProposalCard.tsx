@@ -1,9 +1,10 @@
-import { View, Text } from 'react-native'
+import { View, Text, Button } from 'react-native'
 import React from 'react'
 import { Card } from 'react-native-paper'
 import { useThemeStore } from '@/stores/themeStore'
+import Row from '../Row'
 
-const ProposalCard: React.FC<{ item: Proposal }> = ({ item }) => {
+const ProposalCard: React.FC<{ item: Proposal, actionButton: any }> = ({ item, actionButton }) => {
   const { colors } = useThemeStore().theme
   return (
     <Card style={{ margin: 8, borderRadius: 10 }}>
@@ -13,6 +14,7 @@ const ProposalCard: React.FC<{ item: Proposal }> = ({ item }) => {
           {item.description || 'No message provided'}
         </Text>
         <Text style={{ fontWeight: 'bold', color: '#2a9d8f' }}>₹ {item.price}</Text>
+        {actionButton && actionButton()}
       </Card.Content>
     </Card>
   )
