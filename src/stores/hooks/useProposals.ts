@@ -67,3 +67,14 @@ export const useCreateComment = ({ proposalId }: any) => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['proposal_by_id', proposalId] }),
   })
 }
+
+export const useUpdateStatus = ({ proposalId }: any) => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (payload: { price?: number, is_accepted: boolean }) => {
+      const res = await apiClientAxios.put(`/proposals/${proposalId}`, payload)
+      return res.data.data
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['proposal_by_id', proposalId] }),
+  })
+}
