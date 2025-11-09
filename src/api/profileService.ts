@@ -2,7 +2,6 @@ import apiClientAxios from './client'
 
 
 export const getProfile = async (params: { id: number }) => {
-  console.log('Fetching profile for user:', params.id)
   const res = await apiClientAxios.get(`/users/${params.id}`)
   return res.data.data
 }

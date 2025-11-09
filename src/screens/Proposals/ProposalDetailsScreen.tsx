@@ -15,6 +15,8 @@ import { useAuthStore } from '@/stores/authStore'
 import { ChatInput } from '@/components/ChatInput'
 import MessageBubble from '@/components/Proposal/MessageBubble'
 import { Portal } from 'react-native-paper'
+import CreateOrderModal from '@/components/Order/CreateOrderModal'
+import { useCreateOrder } from '@/stores/hooks/useOrders' // optional if you have it
 // import { api } from '@/services/apiClient'
 
 export type commentSchemaType = z.infer<typeof commentSchema>
@@ -26,6 +28,9 @@ const ProposalDetailsScreen = ({ route }: any) => {
   const { mutate: createComment, isPending: loadingComment } = useCreateComment({ proposalId })
   const { mutate: updateStatus } = useUpdateStatus({ proposalId })
   const showSnackbar = useSnackbarStore.getState().showSnackbar
+  const [modalVisible, setModalVisible] = useState(false)
+  const [modalType, setModalType] = useState<'accept' | 'reject' | null>(null)
+  const [price, setPrice] = useState('')
 
   const { control, handleSubmit, reset } = useForm<commentSchemaType>({
     resolver: zodResolver(commentSchema),
@@ -41,9 +46,6 @@ const ProposalDetailsScreen = ({ route }: any) => {
     }
   }
 
-  const [modalVisible, setModalVisible] = useState(false)
-  const [modalType, setModalType] = useState<'accept' | 'reject' | null>(null)
-  const [price, setPrice] = useState('')
 
   const handleStatus = async (status: 'accepted' | 'rejected', payload?: any) => {
     try {
@@ -81,9 +83,34 @@ const ProposalDetailsScreen = ({ route }: any) => {
     }
   }
 
+  const [orderModalVisible, setOrderModalVisible] = useState(false)
+  const { mutateAsync: createOrderAsync, isPending: creatingOrder } = useCreateOrder()
+
+  const openCreateOrder = () => setOrderModalVisible(true)
+  const closeCreateOrder = () => setOrderModalVisible(false)
+
+  const createOrderHandler = async (payload: any) => {
+    // If you have a hook: useCreateOrder
+    if (createOrderAsync) {
+      await createOrderAsync({
+        userId: payload.userId,
+        proposalId: payload.proposalId,
+        totalPrice: payload.totalPrice,
+        quantity: payload.quantity,
+        unitPrice: payload.unitPrice,
+        vendorId: payload.vendorId,
+      })
+      // optionally refetch orders/proposal after success
+      refetch()
+      showSnackbar('Order created', 'success')
+      return
+    }
+    showSnackbar('Create Order not wired to API - implement onSubmit', 'info')
+  }
+
   const createOrder = async () => {
-    // Placeholder function for creating order
-    showSnackbar('Create Order functionality not implemented yet', 'info')
+    // open modal instead of placeholder
+    openCreateOrder()
   }
 
   return (
@@ -175,6 +202,14 @@ const ProposalDetailsScreen = ({ route }: any) => {
                 </View>
               </View>
             </Modal>
+
+            <CreateOrderModal
+              visible={orderModalVisible}
+              onDismiss={closeCreateOrder}
+              defaultValues={{ proposalId: proposalId, unitPrice: proposal?.price ? String(proposal.price) : undefined }}
+              onSubmit={createOrderHandler}
+              loading={creatingOrder}
+            />
           </View>
         }</>}
     </MyFlatListLayout>
