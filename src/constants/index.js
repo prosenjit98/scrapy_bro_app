@@ -17,8 +17,13 @@ export const bargaining = 'Bargains';
 export const inquiry_proposal = 'InquiryProposal';
 export const proposal_details = 'ProposalDetails';
 
+export const parts = 'Parts';
+export const part_details = 'PartDetails';
+
 export const vendor_root = 'VendorRoot';
 export const vendor_proposal = 'VendorProposal';
+export const vendor_parts = 'VendorParts';
+export const part_create = 'PartCreate';
 
 export const SCREEN_WIDTH = Dimensions.get('window').width;
 export const SCREEN_HEIGHT = Platform.select({

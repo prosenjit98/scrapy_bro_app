@@ -2,7 +2,7 @@ import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import HomeScreen from '@/screens/HomeScreen'
 import ProfileScreen from '@/screens/Profile/ProfileScreen'
-import { bargaining, home, inquiries, my_inquiries, my_inquiry_details, my_orders, my_profile, new_inquiry, profile_edit, proposal_details, vendor_proposal, vendor_root } from '@/constants'
+import { bargaining, home, inquiries, my_inquiries, my_inquiry_details, my_orders, my_profile, new_inquiry, part_create, part_details, profile_edit, proposal_details, vendor_parts, vendor_proposal, vendor_root } from '@/constants'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { InquiryStackParamList, RootStackParamList } from '@/types/navigation'
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons'
@@ -15,6 +15,9 @@ import { useAuthStore } from '@/stores/authStore'
 import ProposalListScreen from '@/screens/Proposals/VendorProposalsScreen'
 import ProposalDetailsScreen from '@/screens/Proposals/ProposalDetailsScreen'
 import UserOrdersScreen from '@/screens/Orders/UserOrdersScreen'
+import PartsVendorListScreen from '@/screens/Parts/PartsVendorListScreen'
+import PartCreateScreen from '@/screens/Parts/PartCreateScreen'
+import PartDetailsScreen from '@/screens/Parts/PartDetailsScreen'
 
 const Tab = createBottomTabNavigator()
 const MainStack = createNativeStackNavigator<RootStackParamList>();
@@ -46,10 +49,10 @@ const VendorTabNavigator = () => {
       height: 75,
       backgroundColor: colors.vendorPrimary,
     },
-    // tabBarLabelPosition: 'beside-icon',
     tabBarHideOnKeyboard: true,
   }}>
-    <Tab.Screen name={vendor_proposal} component={ProposalListScreen} options={{ title: 'Proposal', tabBarIcon: tabBarIcon('home') }} />
+    <Tab.Screen name={vendor_proposal} component={ProposalListScreen} options={{ title: 'Proposal', tabBarIcon: tabBarIcon('file-document') }} />
+    <Tab.Screen name={vendor_parts} component={PartsVendorListScreen} options={{ title: 'Parts', tabBarIcon: tabBarIcon('wrench') }} />
   </Tab.Navigator>)
 }
 
@@ -87,6 +90,8 @@ const MainAppStack = () => (
     <MainStack.Screen name={profile_edit} component={EditProfileScreen} />
     <MainStack.Screen name={vendor_root} component={VendorTabNavigator} />
     <MainStack.Screen name={proposal_details} component={ProposalDetailsScreen} />
+    <MainStack.Screen name={part_create} component={PartCreateScreen} />
+    <MainStack.Screen name={part_details} component={PartDetailsScreen} />
   </MainStack.Navigator>
 )
 

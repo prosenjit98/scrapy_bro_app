@@ -18,3 +18,11 @@ export const fetchMakes = async () => {
   const res = await apiClientAxios.get(`/makes`)
   return res.data.data
 }
+
+export const createParts = async (props: { payload: any }) => {
+  console.log(props)
+  const { data } = await apiClientAxios.post(`/parts`, props.payload, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
+  return data.data
+}
