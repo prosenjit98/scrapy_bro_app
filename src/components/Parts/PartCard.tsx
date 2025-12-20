@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { View, TouchableOpacity, FlatList, ViewStyle } from 'react-native'
 import { Avatar, Card, Text, Button, useTheme, IconButton } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
-import { bargaining, part_create, part_details } from '@/constants'
+import { bargaining, manage_bargaining, part_create, part_details, proposal_form } from '@/constants'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RootStackParamList } from '@/types/navigation'
 import FastImage from 'react-native-fast-image'
@@ -10,11 +10,14 @@ import { useThemeStore } from '@/stores/themeStore'
 import Row from '../Row'
 import CreateOrderModal from '@/components/Order/CreateOrderModal'
 import { useCreateOrder } from '@/stores/hooks/useOrders'
+import { useAuthStore } from '@/stores/authStore'
+import ProposalFormContainer from '../Proposal/ProposalFormContainer'
 
-export const PartCard = ({ item }: { item: Part }) => {
+export const PartCard = ({ item, userView = false }: { item: Part, userView?: boolean }) => {
   const theme = useThemeStore().theme
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'Root'>>()
   const [orderModalVisible, setOrderModalVisible] = useState(false)
+  const user = useAuthStore((s) => s.user);
 
   // create order hook (supports mutate / mutateAsync)
   const createOrderHook: any = useCreateOrder()
@@ -103,7 +106,7 @@ export const PartCard = ({ item }: { item: Part }) => {
             </View>
           </View>
           <View style={{ flexDirection: 'row' }}>
-            <IconButton icon="pencil" size={18} onPress={() => navigation.navigate(part_create, { partId: item.id })} />
+            {!userView && <IconButton icon="pencil" size={18} onPress={() => navigation.navigate(part_create, { partId: item.id })} />}
             {/* {onDelete && <IconButton icon="delete" size={18} onPress={onDelete} />} */}
           </View>
         </Row>
@@ -133,23 +136,15 @@ export const PartCard = ({ item }: { item: Part }) => {
             ₹ {item.price}
           </Text>
 
-          <View style={{ flexDirection: 'row', gap: 10 }}>
+          {userView && <View style={{ flexDirection: 'row', gap: 10 }}>
             <Button
               mode="contained"
               onPress={() => setOrderModalVisible(true)}
-            // onPress={() => navigation.navigate('OrderForm', { partId: item.id })}
             >
               Order
             </Button>
-            <Button
-              mode="outlined"
-              onPress={() =>
-                navigation.navigate(bargaining, { partId: item.id })
-              }
-            >
-              Bargain
-            </Button>
-          </View>
+            <ProposalFormContainer mode="outlined" buttonLabel='Bargain' relatedObjId={item.id} onSuccessNavigation={() => navigation.navigate('Bargains' as any)} />
+          </View>}
         </View>
       </Card.Content>
 

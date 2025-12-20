@@ -17,6 +17,7 @@ import MessageBubble from '@/components/Proposal/MessageBubble'
 import { Portal } from 'react-native-paper'
 import CreateOrderModal from '@/components/Order/CreateOrderModal'
 import { useCreateOrder } from '@/stores/hooks/useOrders' // optional if you have it
+import BargainingCard from '@/components/Proposal/BargainingCard'
 // import { api } from '@/services/apiClient'
 
 export type commentSchemaType = z.infer<typeof commentSchema>
@@ -31,6 +32,8 @@ const ProposalDetailsScreen = ({ route }: any) => {
   const [modalVisible, setModalVisible] = useState(false)
   const [modalType, setModalType] = useState<'accept' | 'reject' | null>(null)
   const [price, setPrice] = useState('')
+
+  const moduleName = !!proposal ? !!proposal.partId ? 'Bargaining Details' : 'Proposal Details' : 'Details'
 
   const { control, handleSubmit, reset } = useForm<commentSchemaType>({
     resolver: zodResolver(commentSchema),
@@ -51,7 +54,10 @@ const ProposalDetailsScreen = ({ route }: any) => {
     try {
       // send additional payload (e.g. price) when accepting
       let modified_status = status === 'accepted' ? true : false
-      updateStatus({ is_accepted: modified_status, ...payload })
+      if (user?.id === proposal?.proposerId)
+        updateStatus({ is_self_accepted: modified_status, ...payload })
+      else if (user?.id === proposal?.vendorId)
+        updateStatus({ is_other_accepted: modified_status, ...payload })
     } catch (e) {
       showSnackbar('Error updating proposal status', 'error')
     }
@@ -113,34 +119,45 @@ const ProposalDetailsScreen = ({ route }: any) => {
     openCreateOrder()
   }
 
+  const actionButton = () => {
+    if (!proposal) return null
+    if ((proposal.isSelfAccepted === null && (user?.id === proposal.proposerId)) || (user?.id === proposal.vendorId)) {
+      return (
+        <Row style={{ justifyContent: 'space-around', marginVertical: 10 }}>
+          <Button title="Accept" color="#2a9d8f" onPress={() => openModal('accept')} />
+          <Button title="Reject" color="#e63946" onPress={() => openModal('reject')} />
+        </Row>
+      )
+    }
+    if ((proposal.isSelfAccepted && !proposal.isOtherAccepted) || (!proposal.isSelfAccepted && proposal.isOtherAccepted)) {
+      return (
+        <View style={{ borderRadius: 8, marginTop: 4, overflow: 'hidden' }}>
+          <Text style={{ alignSelf: 'center', marginVertical: 10, color: '#ffb703', fontWeight: '600' }}>Waiting for other party to respond</Text>
+        </View>
+      )
+    } else if (proposal.isSelfAccepted && proposal.isOtherAccepted && ((user?.id !== proposal.proposerId) || (user?.id === proposal.vendorId))) {
+      return (
+        <View style={{ borderRadius: 8, marginTop: 4, overflow: 'hidden' }}>
+          <Button title="Create Order" color="#2a9d8f" onPress={createOrder} />
+        </View>
+      )
+    }
+    return null
+  }
+
   return (
-    <MyFlatListLayout hasProfileLink={true} withBackButton={true} moduleName="Proposal Details">
+    <MyFlatListLayout hasProfileLink={true} withBackButton={true} moduleName={moduleName}>
       {isPending ? <ProposalSkeleton /> : <>
         {!proposal ? <NoData title="Cannot fetch data" description="Sorry server is unreachable we are not able to pull data from server" /> :
           <View style={{ flexGrow: 1, justifyContent: 'space-between' }}>
             <View style={{ flex: 1 }}>
 
-              <ProposalCard
-                item={proposal}
-                actionButton={() => {
-                  if (!proposal.isAccepted && ((proposal.inquiryId && user?.id === proposal.proposerId) || (user?.id === proposal.vendorId))) {
-                    return (
-                      <Row style={{ justifyContent: 'space-around', marginVertical: 20 }}>
-                        <Button title="Accept" color="#2a9d8f" onPress={() => openModal('accept')} />
-                        <Button title="Reject" color="#e63946" onPress={() => openModal('reject')} />
-                      </Row>
-                    )
-                  }
-                  if (proposal.isAccepted && ((proposal.inquiryId && user?.id !== proposal.proposerId) || (user?.id === proposal.vendorId))) {
-                    return (
-                      <View style={{ borderRadius: 8, marginTop: 4, overflow: 'hidden' }}>
-                        <Button title="Create Order" color="#2a9d8f" onPress={createOrder} />
-                      </View>
-                    )
-                  }
-                  return null
-                }}
-              />
+              {!!proposal.partId ?
+                <BargainingCard item={proposal} actionButton={actionButton} />
+                : <ProposalCard
+                  item={proposal}
+                  actionButton={actionButton}
+                />}
 
               <FlatList
                 data={proposal.comments}

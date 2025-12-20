@@ -6,13 +6,19 @@ interface Proposal {
   proposerId: number,
   price: number,
   quantity: number,
-  isAccepted: boolean,
+  isSelfAccepted: boolean,
+  isOtherAccepted: boolean,
   createdAt: string,
   updatedAt: string,
   inquiryId?: number,
   proposer: { id: number, fullName: string },
   vendor?: { id: number, fullName: string },
-  part?: null,
+  part?: {
+    name: string,
+    id: number,
+    model: { id: number; name: string };
+    make: { id: number; name: string };
+  },
   comments?: Comment[]
 }
 interface OptionsStr {

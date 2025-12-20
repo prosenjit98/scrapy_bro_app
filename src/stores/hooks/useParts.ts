@@ -7,7 +7,9 @@ export const useGetParts = () => {
   return useQuery({
     queryKey: ['parts'],
     queryFn: async () => {
+      console.log('Parts fetching started')
       const res = await apiClientAxios.get('/parts')
+      console.log('Parts fetched:', res.data)
       return res.data.data
     },
   })

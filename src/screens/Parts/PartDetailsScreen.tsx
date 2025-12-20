@@ -7,6 +7,7 @@ import { useGetPartDetails } from '@/stores/hooks/useParts';
 import MyLayout from '@/components/MyLayout';
 import CreateOrderModal from '@/components/Order/CreateOrderModal';
 import { useCreateOrder } from '@/stores/hooks/useOrders';
+import ProposalFormContainer from '@/components/Proposal/ProposalFormContainer';
 
 export default function PartDetailsScreen() {
   const { params } = useRoute<any>();
@@ -97,9 +98,7 @@ export default function PartDetailsScreen() {
           <Button mode="contained" style={{ flex: 1, marginRight: 8 }} onPress={openOrderModal}>
             Order Now
           </Button>
-          <Button mode="outlined" style={{ flex: 1 }}>
-            Bargain
-          </Button>
+          <ProposalFormContainer mode="contained" style={{ flex: 1 }} buttonLabel='Bargain' />
         </Card.Actions>
       </Card>
 

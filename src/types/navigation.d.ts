@@ -9,7 +9,7 @@ export type RootStackParamList = {
   [strings.vendor_root]: VendorTabParam;
   [strings.inquiry_proposal]: undefined;
   [strings.proposal_details]: { proposalId: number | string };
-  [strings.bargaining]: { partId: number };
+  [strings.manage_bargaining]: { partId: number };
   [strings.parts]: undefined;
   [strings.part_details]: { partId: number };
   [strings.part_create]: undefined | { partId: number }
@@ -19,6 +19,7 @@ export type TabParamList = {
   [strings.home]: undefined;
   [strings.my_orders]: undefined;
   [strings.inquiry]: undefined;
+  [strings.bargaining]: undefined;
 }
 
 export type InquiryStackParamList = {

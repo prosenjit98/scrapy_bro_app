@@ -1,8 +1,9 @@
 import { z } from 'zod'
 
 export const proposalSchema = z.object({
-  amount: z.string().min(1, 'Amount required'),
-  message: z.string().optional(),
+  price: z.string().min(1, 'Amount required'),
+  description: z.string().optional(),
+  quantity: z.string().min(1, 'Quantity must be at least 1').optional()
 })
 
 export const commentSchema = z.object({

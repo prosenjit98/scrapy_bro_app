@@ -24,7 +24,17 @@ export const useVendorProposals = (vendorId: number, optionArr?: OptionsStr[]) =
     },
     enabled: !!vendorId
   })
+}
 
+export const useMyBargain = (proposerId?: number, optionArr?: OptionsStr[]) => {
+  return useQuery({
+    queryKey: ['my_bargain'],
+    queryFn: async () => {
+      const res = await apiClientAxios.get(buildUrl({ baseUrl: '/proposals', optionArr }))
+      return res.data.data.data as Proposal[]
+    },
+    enabled: !!proposerId
+  })
 }
 
 export const useGetProposal = (proposalId: number, optionArr?: OptionsStr[]) => {

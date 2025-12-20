@@ -8,7 +8,7 @@ export const buildUrl = (props: { baseUrl: string, optionArr?: OptionsStr[] }) =
     baseUrl = baseUrl + '?'
 
   optionArr.forEach(element => {
-    baseUrl = baseUrl + element.key + '=' + element.value.toString()
+    baseUrl = baseUrl + element.key + '=' + element.value.toString() + '&'
   });
   return baseUrl
 }

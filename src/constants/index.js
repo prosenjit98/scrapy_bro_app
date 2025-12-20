@@ -13,7 +13,10 @@ export const my_inquiries = 'MyInquiryList';
 export const my_inquiry_details = 'MyInquiryDetails';
 export const new_inquiry = 'NewInquiry';
 export const inquiries = 'Inquires';
+
 export const bargaining = 'Bargains';
+export const manage_bargaining = 'ManageBargaining';
+
 export const inquiry_proposal = 'InquiryProposal';
 export const proposal_details = 'ProposalDetails';
 
@@ -24,6 +27,8 @@ export const vendor_root = 'VendorRoot';
 export const vendor_proposal = 'VendorProposal';
 export const vendor_parts = 'VendorParts';
 export const part_create = 'PartCreate';
+
+export const proposal_form = 'ProposalForm';
 
 export const SCREEN_WIDTH = Dimensions.get('window').width;
 export const SCREEN_HEIGHT = Platform.select({

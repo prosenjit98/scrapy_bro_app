@@ -11,13 +11,15 @@ import EditProfileScreen from '@/screens/Profile/EditProfileScreen'
 import MyInquiryScreen from '@/screens/MyInquiries/MyInquiryScreen'
 import InquiryFormScreen from '@/screens/MyInquiries/InquiryFormScreen'
 import InquiryDetailScreen from '@/screens/MyInquiries/InquiryDetailScreen'
-import { useAuthStore } from '@/stores/authStore'
 import ProposalListScreen from '@/screens/Proposals/VendorProposalsScreen'
 import ProposalDetailsScreen from '@/screens/Proposals/ProposalDetailsScreen'
 import UserOrdersScreen from '@/screens/Orders/UserOrdersScreen'
 import PartsVendorListScreen from '@/screens/Parts/PartsVendorListScreen'
 import PartCreateScreen from '@/screens/Parts/PartCreateScreen'
 import PartDetailsScreen from '@/screens/Parts/PartDetailsScreen'
+// import UserProposalListScreen from '@/screens/Proposals/UserProposalListScreen'
+import BargainingListScreen from '@/screens/Proposals/BargainingListScreen'
+
 
 const Tab = createBottomTabNavigator()
 const MainStack = createNativeStackNavigator<RootStackParamList>();
@@ -77,7 +79,7 @@ const TabStack = () => {
     }}>
       <Tab.Screen name={home} component={HomeScreen} options={{ tabBarIcon: tabBarIcon('home') }} />
       <Tab.Screen name={inquiries} component={InquiryStack} options={{ tabBarIcon: tabBarIcon('clipboard-list') }} />
-      <Tab.Screen name={bargaining} component={ProposalListScreen} options={{ tabBarIcon: tabBarIcon('file-star-four-points') }} />
+      <Tab.Screen name={bargaining} component={BargainingListScreen} options={{ tabBarIcon: tabBarIcon('file-star-four-points') }} />
       <Tab.Screen name={my_orders} component={UserOrdersScreen} options={{ tabBarIcon: tabBarIcon('credit-card-clock') }} />
     </Tab.Navigator>
   )

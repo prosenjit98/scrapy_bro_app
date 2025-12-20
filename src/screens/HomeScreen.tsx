@@ -6,15 +6,17 @@ import { useThemeStore } from '@/stores/themeStore';
 import MyLayout from '@/components/MyLayout';
 import { vendor_root } from '@/constants';
 import { PartsListScreen } from './Parts/PartsListScreen';
+import MyHeader from '@/components/MyHeader';
 
 export default function HomeScreen({ navigation }: any) {
-  const logout = useAuthStore((s) => s.logout);
+  const user = useAuthStore((s) => s.user);
   const { toggleTheme, mode } = useThemeStore();
 
   return (
     <>
-      {/* <PartsListScreen /> */}
-      <FAB
+      <MyHeader hasProfileLink={true} />
+      <PartsListScreen userView={true} />
+      {user && user.role === 'vendor' && <FAB
         icon="fast-forward"
         style={{
           position: 'absolute',
@@ -22,7 +24,7 @@ export default function HomeScreen({ navigation }: any) {
           bottom: 16,
         }}
         onPress={() => navigation.navigate(vendor_root)}
-      />
+      />}
     </>
     // <MyLayout hasProfileLink={true}>
 

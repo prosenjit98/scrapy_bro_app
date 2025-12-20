@@ -1,4 +1,5 @@
 import { API_URL } from "@/constants";
+import { useAuthStore } from "@/stores/authStore";
 import { useSnackbarStore } from "@/stores/hooks/useSnackbarStore";
 import useLoaderState from "@/stores/loaderState";
 import axios from "axios";
@@ -54,6 +55,12 @@ apiClientAxios.interceptors.response.use(
     return response
   },
   (error) => {
+    // if status is 401, logout user
+    if (error.response?.status === 401) {
+      // handle logout logic here
+      console.log('Unauthorized! Logging out...')
+      useAuthStore.getState().logout()
+    }
     const showSnackbar = useSnackbarStore.getState().showSnackbar
     if (error.response) {
       useLoaderState.getState().hide();

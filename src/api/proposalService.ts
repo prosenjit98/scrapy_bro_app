@@ -6,7 +6,7 @@ export const fetchProposals = async () => {
 }
 
 export const fetchMyProposal = async (id: number) => {
-  const { data } = await apiClientAxios.get(`/proposals/${id}?withComments=1`)
+  const { data } = await apiClientAxios.get(`/proposals/${id}?withComments=1&withParts=1`)
   return data.data as Proposal
 }
 
