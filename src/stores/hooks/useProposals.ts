@@ -7,7 +7,7 @@ export const useUserProposals = (inquiryId: number, optionArr?: OptionsStr[]) =>
   return useQuery({
     queryKey: ['proposals_user'],
     queryFn: async () => {
-      const res = await apiClientAxios.get(buildUrl({ baseUrl: '/proposals', optionArr }))
+      const res = await apiClientAxios.get(buildUrl({ baseUrl: `/proposals?inquiryId=${inquiryId}`, optionArr }))
       console.log(res.data.data.data)
       return res.data.data.data as Proposal[]
     },

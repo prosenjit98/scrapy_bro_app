@@ -14,7 +14,6 @@ import { z } from 'zod'
 import { useAuthStore } from '@/stores/authStore'
 import { ChatInput } from '@/components/ChatInput'
 import MessageBubble from '@/components/Proposal/MessageBubble'
-import { Portal } from 'react-native-paper'
 import CreateOrderModal from '@/components/Order/CreateOrderModal'
 import { useCreateOrder } from '@/stores/hooks/useOrders' // optional if you have it
 import BargainingCard from '@/components/Proposal/BargainingCard'
