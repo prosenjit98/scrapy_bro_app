@@ -47,6 +47,7 @@ export const theme = {
     primaryDark: '#492b85ff',
     vendorPrimary: '#1cad09ff',
     vendorPrimaryLight: '#5cf049ff',
+    outline: '#d1d5db',
 
     primaryBackground: '#f5f8c4ff',
     primaryLightBackground: '#F7F7F8',
@@ -67,7 +68,7 @@ export const theme = {
 
     accentLight: '#EFFFF8',
 
-    background: '#ffffff',
+    background: '#e0e7ff',
     secondaryBackground: '#F8F8F8',
 
     caption: '#6C6C89',

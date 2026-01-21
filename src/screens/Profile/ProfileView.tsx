@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Card, IconButton, Text } from 'react-native-paper';
+import { Button, Card, IconButton, Text } from 'react-native-paper';
 import * as strings from '@/constants';
 import { AppTheme } from '@/theme';
 import { RootStackParamList } from '@/types/navigation';
@@ -10,6 +10,7 @@ import Icons from '@react-native-vector-icons/material-design-icons';
 import { useThemeStore } from '@/stores/themeStore';
 import MyLayout from '@/components/MyLayout';
 import { useProfile } from '@/stores/hooks/useProfile';
+import { useAuthStore } from '@/stores/authStore';
 
 const ProfileView = () => {
   const { colors } = useThemeStore().theme;
@@ -17,6 +18,7 @@ const ProfileView = () => {
   const styles = makeStyles(colors);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'Root'>>();
   const { profileQuery } = useProfile()
+  const { logout } = useAuthStore()
   const { data: profile } = profileQuery()
   console.log("profile", profile)
 
@@ -76,6 +78,7 @@ const ProfileView = () => {
             </View>
           </Card.Content>
         </Card>
+        <Button onPress={() => { logout() }} mode="contained" style={{ marginTop: 20 }}>Logout</Button>
         <View style={{ height: 20 }} />
       </View>
     </View>
