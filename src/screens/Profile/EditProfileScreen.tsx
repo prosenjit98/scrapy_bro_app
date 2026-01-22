@@ -1,24 +1,28 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
 import React from 'react';
-import { RefreshControl, ScrollView, View } from 'react-native';
+import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootStackParamList } from '@/types/Navigation';
 import { useThemeStore } from '@/stores/themeStore';
-import MyHeader from '@/components/MyHeader';
 import { useProfile } from '@/stores/hooks/useProfile';
 import ProfileEditScreen from './PersonalEditForm';
 import AvatarUpdate from './AvatarUpdate';
-
+import { AppTheme } from '@/theme';
+import { Text } from 'react-native-paper';
+import LinearGradient from 'react-native-linear-gradient';
 
 const EditProfileScreen = () => {
   const { bottom } = useSafeAreaInsets();
-  const { colors } = useThemeStore().theme;
 
   const {
     params: { type },
   } = useRoute<RouteProp<RootStackParamList, 'EditProfile'>>();
-  const { profileQuery } = useProfile()
-  const { refetch, isFetching } = profileQuery()
+  const { profileQuery } = useProfile();
+  const { refetch, isFetching } = profileQuery();
+  const theme = useThemeStore().theme;
+  const { colors } = theme;
+  //@ts-ignore
+  const styles = makeStyles(colors);
 
   const getForm = () => {
     if (type === 'personal_info') return <ProfileEditScreen />;
@@ -27,17 +31,52 @@ const EditProfileScreen = () => {
 
   return (
     <>
-      <MyHeader hasProfileLink={true} withBackButton={true} moduleName={'Profile'} />
+      {/* Header Section with Gradient */}
+
       <ScrollView
         keyboardShouldPersistTaps="always"
         refreshControl={<RefreshControl refreshing={isFetching} onRefresh={refetch} />}
         style={{ backgroundColor: colors.background, flex: 1 }}
-        contentContainerStyle={{ flexGrow: 1, padding: 16 }}
+        contentContainerStyle={{ flexGrow: 1 }}
       >
+        <LinearGradient
+          colors={['#4f46e5', '#9333ea']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.headerSection}
+        >
+          <Text style={styles.headerTitle}>Edit Profile</Text>
+          <Text style={styles.headerSubtitle}>Manage your account</Text>
+        </LinearGradient>
         <View style={{ marginBottom: bottom + 10, flex: 1 }}>{getForm()}</View>
       </ScrollView>
     </>
   );
 };
+
+const makeStyles = (colors: AppTheme['colors']) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    headerSection: {
+      paddingHorizontal: 16,
+      paddingTop: 40,
+      paddingBottom: 62,
+      borderBottomLeftRadius: 24,
+      borderBottomRightRadius: 24,
+    },
+    headerTitle: {
+      fontSize: 24,
+      fontWeight: '700',
+      color: '#fff',
+      marginBottom: 4,
+    },
+    headerSubtitle: {
+      fontSize: 14,
+      color: '#c7d2fe',
+    },
+  });
 
 export default EditProfileScreen;

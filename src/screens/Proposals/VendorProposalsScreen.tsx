@@ -1,16 +1,30 @@
 import React from 'react'
-import { FlatList, TouchableOpacity, Text } from 'react-native'
+import { FlatList, TouchableOpacity, Text, View } from 'react-native'
 import { ActivityIndicator, Card, FAB } from 'react-native-paper'
 import { NoData } from '@/components/NoData'
 import { useVendorProposals } from '@/stores/hooks/useProposals'
 import { useAuthStore } from '@/stores/authStore'
 import MyHeader from '@/components/MyHeader'
+import SkeletonBox from '@/components/SkeletonBox'
 
 const ProposalListScreen = ({ navigation }: any) => {
   const { user } = useAuthStore();
   const { data, isLoading, refetch } = useVendorProposals(user?.id!)
 
-  if (isLoading) return <ActivityIndicator style={{ marginTop: 40 }} />
+  if (isLoading) {
+    return (
+      <Card>
+        <View style={{ padding: 16 }}>
+          <SkeletonBox height={20} width="60%" />
+          <SkeletonBox height={10} width="90%" />
+          <SkeletonBox height={10} width="90%" />
+          <SkeletonBox height={10} width="90%" />
+        </View>
+      </Card>
+    )
+  }
+
+  console.log(data)
 
 
   return (

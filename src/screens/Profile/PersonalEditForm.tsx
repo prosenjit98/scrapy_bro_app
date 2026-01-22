@@ -1,5 +1,5 @@
 import React from 'react'
-import { ActivityIndicator, View } from 'react-native'
+import { ActivityIndicator, StyleSheet, View } from 'react-native'
 import { Button, Text, useTheme } from 'react-native-paper'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -17,7 +17,7 @@ const ProfileEditScreen = () => {
   const { user } = useAuthStore()
   const { updateMutation } = useProfile()
   const { mutate, isPending } = updateMutation();
-
+  const styles = makeStyles(theme.colors)
 
   const { control, handleSubmit } = useForm<ProfileForm>({
     resolver: zodResolver(ProfileSchema),
@@ -36,15 +36,14 @@ const ProfileEditScreen = () => {
   }
 
   return (
-    <View>
-      <Text variant="headlineSmall" style={{ marginBottom: 24 }}>
-        Edit Profile
-      </Text>
+    <View style={styles.card}>
+      {/* Full Name / Store Name Field */}
+      <TextField control={control} name="fullName" label='Full Name' placeholder='Enter name' fontIconName="account" />
 
-      <TextField control={control} name="fullName" label="Full Name" />
-      <TextField control={control} name="email" label="Email" />
-      <TextField control={control} name="phoneNumber" label="Phone" />
-      <TextField control={control} name="address" label="Address" />
+      {/* Email Field */}
+      <TextField control={control} name="email" label="Email" placeholder="Enter your email" fontIconName="email" />
+      <TextField control={control} name="phoneNumber" label="Phone" fontIconName="phone" placeholder="Enter your phone number" />
+      <TextField control={control} name="address" label="Address" fontIconName="map-marker" numberOfLines={3} placeholder="Enter your address" />
 
       <Button
         mode="contained"
@@ -66,5 +65,21 @@ const ProfileEditScreen = () => {
     </View>
   )
 }
+
+const makeStyles = (colors: any) =>
+  StyleSheet.create({
+    card: {
+      backgroundColor: '#fff',
+      borderRadius: 16,
+      padding: 20,
+      marginHorizontal: 16,
+      marginTop: -30,
+      elevation: 8,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+    }
+  })
 
 export default ProfileEditScreen
