@@ -8,8 +8,7 @@ import { useProfile } from '@/stores/hooks/useProfile';
 import ProfileEditScreen from './PersonalEditForm';
 import AvatarUpdate from './AvatarUpdate';
 import { AppTheme } from '@/theme';
-import { Text } from 'react-native-paper';
-import LinearGradient from 'react-native-linear-gradient';
+import MyNewHeader from '@/components/MyNewHeader';
 
 const EditProfileScreen = () => {
   const { bottom } = useSafeAreaInsets();
@@ -39,15 +38,11 @@ const EditProfileScreen = () => {
         style={{ backgroundColor: colors.background, flex: 1 }}
         contentContainerStyle={{ flexGrow: 1 }}
       >
-        <LinearGradient
-          colors={['#4f46e5', '#9333ea']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={styles.headerSection}
-        >
-          <Text style={styles.headerTitle}>Edit Profile</Text>
-          <Text style={styles.headerSubtitle}>Manage your account</Text>
-        </LinearGradient>
+        <MyNewHeader
+          title="Edit Profile"
+          subtitle="Manage your account"
+          withBackButton={true}
+        />
         <View style={{ marginBottom: bottom + 10, flex: 1 }}>{getForm()}</View>
       </ScrollView>
     </>
@@ -59,23 +54,6 @@ const makeStyles = (colors: AppTheme['colors']) =>
     container: {
       flex: 1,
       backgroundColor: colors.background,
-    },
-    headerSection: {
-      paddingHorizontal: 16,
-      paddingTop: 40,
-      paddingBottom: 62,
-      borderBottomLeftRadius: 24,
-      borderBottomRightRadius: 24,
-    },
-    headerTitle: {
-      fontSize: 24,
-      fontWeight: '700',
-      color: '#fff',
-      marginBottom: 4,
-    },
-    headerSubtitle: {
-      fontSize: 14,
-      color: '#c7d2fe',
     },
   });
 

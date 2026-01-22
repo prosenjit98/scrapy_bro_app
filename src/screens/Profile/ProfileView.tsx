@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, StyleSheet, TouchableOpacity } from 'react-native'
 import { Text } from 'react-native-paper'
 import { useThemeStore } from '@/stores/themeStore'
 import { AppTheme } from '@/theme'
@@ -10,6 +10,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RootStackParamList } from '@/types/navigation'
 import Icon, { MaterialDesignIconsIconName } from '@react-native-vector-icons/material-design-icons'
 import { profile_edit } from '@/constants'
+import MyNewHeader from '@/components/MyNewHeader'
 
 const ProfileView = () => {
   const theme = useThemeStore().theme
@@ -45,10 +46,7 @@ const ProfileView = () => {
   return (
     <View style={styles.container}>
       {/* Header Section */}
-      <View style={styles.headerSection}>
-        <Text style={styles.headerTitle}>Profile</Text>
-        <Text style={styles.headerSubtitle}>Manage your account</Text>
-      </View>
+      <MyNewHeader title='Profile' subtitle='View and manage your profile' withBackButton={true} />
 
       {/* Profile Card */}
       <View style={styles.profileCard}>
@@ -230,24 +228,6 @@ const makeStyles = (colors: AppTheme['colors']) =>
     container: {
       flex: 1,
       backgroundColor: colors.background,
-    },
-    headerSection: {
-      backgroundColor: '#4f46e5',
-      paddingHorizontal: 16,
-      paddingVertical: 40,
-      paddingBottom: 60,
-      borderBottomLeftRadius: 24,
-      borderBottomRightRadius: 24,
-    },
-    headerTitle: {
-      fontSize: 24,
-      fontWeight: '700',
-      color: '#fff',
-      marginBottom: 4,
-    },
-    headerSubtitle: {
-      fontSize: 14,
-      color: '#c7d2fe',
     },
     profileCard: {
       backgroundColor: '#fff',
