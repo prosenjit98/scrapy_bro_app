@@ -15,7 +15,7 @@ const OrderRow = ({ item, onPress, onTrack, onContact, onRate }: { item: Order; 
   const styles = makeStyles(colors)
   const config = statusConfig(item.status)
 
-  const imageUrl = item.parts?.images && item.parts.images.length > 0 && item.parts.images[0].file.url ? item.parts.images[0].file.url : null
+  const imageUrl = item.part?.images && item.part.images.length > 0 && item.part.images[0].file.url ? item.part.images[0].file.url : null
   // const imageUrl = typeof item.productImage === 'string'
   //   ? item.productImage
   //   : (item.productImage as any)?.file?.url ?? (item.productImage as any)?.url
@@ -47,7 +47,7 @@ const OrderRow = ({ item, onPress, onTrack, onContact, onRate }: { item: Order; 
             />
           )}
           <View style={{ flex: 1 }}>
-            <Text style={styles.productName} numberOfLines={2}>{item.parts?.name || 'Product'}</Text>
+            <Text style={styles.productName} numberOfLines={2}>{item.part?.name || 'Product'}</Text>
             <Text style={styles.vendorName}>{item.vendor}</Text>
             <Text style={styles.price}>₹{item.totalPrice?.toFixed(2)}</Text>
           </View>

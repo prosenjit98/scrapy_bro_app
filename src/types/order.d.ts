@@ -12,7 +12,7 @@ interface Order {
   status: 'pending' | 'completed' | 'canceled' | 'shipped' | 'delivered';
   createdAt: Date;
   updatedAt: Date;
-  parts?: Part;
+  part?: Part;
   paymentMethod: 'credit_card' | 'paypal' | 'bank_transfer' | 'cash_on_delivery';
 }
 

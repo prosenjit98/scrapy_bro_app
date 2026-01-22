@@ -166,7 +166,7 @@ const makeStyles = (colors: AppTheme['colors']) =>
       borderBottomColor: '#f3f4f6',
       marginHorizontal: 16,
       borderRadius: 8,
-      marginTop: -12,
+      marginTop: -25,
       flexGrow: 0,
     },
     filterContentContainer: {

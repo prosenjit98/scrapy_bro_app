@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { setAuthToken } from '@/api/client';
+import { useProfile } from '@/stores/hooks/useProfile'
 
 type AuthState = {
   token: string | null;
@@ -26,9 +27,8 @@ export const useAuthStore = create<AuthState>()(
         set({ token: token, user: user });
         setAuthToken(token);
       },
-      logout: () => {
-        set({ token: null, user: null });
-        setAuthToken(null);
+      logout: async () => {
+        set({ user: null, token: null })
       },
       hydrate: async () => {
         const saved = await AsyncStorage.getItem('auth-storage');

@@ -48,5 +48,9 @@ export const useProfile = () => {
     })
   }
 
-  return { profileQuery, updateMutation, uploadMutation }
+  const invalidateProfile = () => {
+    return queryClient.invalidateQueries({ queryKey: ['profile'] })
+  }
+
+  return { profileQuery, updateMutation, uploadMutation, invalidateProfile }
 }

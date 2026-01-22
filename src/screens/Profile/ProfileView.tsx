@@ -18,9 +18,10 @@ const ProfileView = () => {
   //@ts-ignore
   const styles = makeStyles(colors)
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'Root'>>()
-  const { profileQuery } = useProfile()
+  const { profileQuery, invalidateProfile } = useProfile()
   const { logout } = useAuthStore()
   const { data: profile } = profileQuery()
+
 
   const menuItems = [
     { id: 1, label: 'Edit Profile', icon: 'pencil', action: () => navigation.navigate(profile_edit, { type: 'personal_info' }) },
@@ -33,10 +34,7 @@ const ProfileView = () => {
 
   const handleLogout = () => {
     logout()
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Login' as any }],
-    })
+    invalidateProfile()
   }
 
   const getInitial = (name?: string) => {

@@ -121,7 +121,7 @@ export const PartCard = ({ item, userView = false }: { item: Part, userView?: bo
         </Text>
 
         {/* Images */}
-        {item.images && item.images?.length > 0 && renderImages(item.images)}
+        {item.images && item.images?.length > 0 && renderImages(item.images as any)}
 
         {/* Price + Actions */}
         <View
