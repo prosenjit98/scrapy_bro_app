@@ -7,7 +7,6 @@ interface Part {
   vehicleMake: string;
   vehicleModel: string;
   vehicleYear: number;
-  images?: string[];
   vendor_full_name: string;
   vendor: {
     id: number;

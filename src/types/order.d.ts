@@ -9,10 +9,11 @@ interface Order {
   totalPrice: number;
   quantity: number;
   unitPrice: number;
-  status: 'pending' | 'completed' | 'canceled';
+  status: 'pending' | 'completed' | 'canceled' | 'shipped' | 'delivered';
   createdAt: Date;
   updatedAt: Date;
   parts?: Part;
+  paymentMethod: 'credit_card' | 'paypal' | 'bank_transfer' | 'cash_on_delivery';
 }
 
 interface CreateOrderPayload extends Order { }

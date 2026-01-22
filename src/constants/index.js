@@ -37,3 +37,18 @@ export const SCREEN_HEIGHT = Platform.select({
   android: Dimensions.get('screen').height,
   ios: Dimensions.get('window').height,
 });
+
+export const statusConfig = status => {
+  switch (status) {
+    case 'completed':
+      return { color: '#10b981', icon: 'check-circle', label: 'Delivered' };
+    case 'canceled':
+      return { color: '#ef4444', icon: 'close-circle', label: 'Canceled' };
+    case 'pending':
+      return { color: '#f59e0b', icon: 'clock-outline', label: 'Pending' };
+    case 'shipped':
+      return { color: '#8b5cf6', icon: 'truck', label: 'Shipped' };
+    default:
+      return { color: '#6b7280', icon: 'package', label: status };
+  }
+};

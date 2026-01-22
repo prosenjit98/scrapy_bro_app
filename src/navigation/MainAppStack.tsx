@@ -83,6 +83,7 @@ const TabStack = () => {
       <Tab.Screen name={inquiries} component={InquiryStack} options={{ tabBarIcon: tabBarIcon('clipboard-list') }} />
       <Tab.Screen name={bargaining} component={BargainingListScreen} options={{ tabBarIcon: tabBarIcon('file-star-four-points') }} />
       <Tab.Screen name={my_orders} component={UserOrdersScreen} options={{ tabBarIcon: tabBarIcon('credit-card-clock') }} />
+      <Tab.Screen name={my_profile} component={ProfileScreen} options={{ tabBarIcon: tabBarIcon('account-circle') }} />
     </Tab.Navigator>
   )
 }
@@ -90,7 +91,6 @@ const TabStack = () => {
 const MainAppStack = () => (
   <MainStack.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
     <MainStack.Screen name="Root" component={TabStack} />
-    <MainStack.Screen name={my_profile} component={ProfileScreen} />
     <MainStack.Screen name={profile_edit} component={EditProfileScreen} />
     <MainStack.Screen name={vendor_root} component={VendorTabNavigator} />
     <MainStack.Screen name={proposal_details} component={ProposalDetailsScreen} />
