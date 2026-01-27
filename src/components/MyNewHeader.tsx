@@ -1,4 +1,4 @@
-import { StyleSheet, View, ViewProps } from 'react-native'
+import { StyleSheet, TouchableOpacity, View, ViewProps } from 'react-native'
 import React from 'react'
 import { LinearGradient } from 'react-native-linear-gradient'
 import { useThemeStore } from '@/stores/themeStore';
@@ -24,12 +24,18 @@ const MyNewHeader: React.FC<ViewProps & { withBackButton?: boolean; title?: stri
       end={{ x: 1, y: 0 }}
       style={styles.headerSection}
     >
-      <Row>
-        {props.withBackButton && <IconButton icon={() => <Icons size={25} name={'keyboard-backspace'} style={styles.navigationIcon} />} onPress={() => navigation.goBack()} />}
-        <View>
-          <Text style={styles.headerTitle}>{props.title}</Text>
-          <Text style={styles.headerSubtitle}>{props.subtitle}</Text>
-        </View>
+      <Row style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+        <Row>
+          {props.withBackButton && <IconButton icon={() => <Icons size={25} name={'keyboard-backspace'} style={styles.navigationIcon} />} onPress={() => navigation.goBack()} />}
+          <View>
+            <Text style={styles.headerTitle}>{props.title}</Text>
+            <Text style={styles.headerSubtitle}>{props.subtitle}</Text>
+          </View>
+        </Row>
+        <TouchableOpacity style={styles.notificationButton}>
+          <Icons name="bell" size={24} color="#fff" />
+          <View style={styles.notificationBadge} />
+        </TouchableOpacity>
       </Row>
     </LinearGradient>
   )
@@ -56,7 +62,24 @@ const makeStyles = (colors: any) =>
     },
     navigationIcon: {
       color: colors.onPrimary
-    }
+    },
+    notificationButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: 'rgba(255,255,255,0.2)',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    notificationBadge: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      backgroundColor: '#ef4444',
+      position: 'absolute',
+      top: 8,
+      right: 8,
+    },
   });
 
 

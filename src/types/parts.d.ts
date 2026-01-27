@@ -8,6 +8,8 @@ interface Part {
   vehicleModel: string;
   vehicleYear: number;
   vendor_full_name: string;
+  isNegotiable: boolean;
+  city?: string;
   vendor: {
     id: number;
     fullName: string;
@@ -20,4 +22,8 @@ interface Part {
   model: { id: number; name: string };
   make: { id: number; name: string };
   isAvailable: boolean;
+  category: {
+    id: number;
+    name: string;
+  }
 }
