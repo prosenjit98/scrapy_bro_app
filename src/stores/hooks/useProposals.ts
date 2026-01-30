@@ -8,7 +8,6 @@ export const useUserProposals = (inquiryId: number, optionArr?: OptionsStr[]) =>
     queryKey: ['proposals_user'],
     queryFn: async () => {
       const res = await apiClientAxios.get(buildUrl({ baseUrl: `/proposals?inquiryId=${inquiryId}`, optionArr }))
-      console.log(res.data.data.data)
       return res.data.data.data as Proposal[]
     },
     enabled: !!inquiryId
@@ -19,8 +18,8 @@ export const useVendorProposals = (vendorId: number, optionArr?: OptionsStr[]) =
   return useQuery({
     queryKey: ['proposals_vendor'],
     queryFn: async () => {
-      const res = await apiClientAxios.get(buildUrl({ baseUrl: '/proposals', optionArr }))
-      return res.data.data
+      const res = await apiClientAxios.get(buildUrl({ baseUrl: `/proposals?vendorId=${vendorId}`, optionArr }))
+      return res.data.data.data
     },
     enabled: !!vendorId
   })

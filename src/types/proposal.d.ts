@@ -13,12 +13,7 @@ interface Proposal {
   inquiryId?: number,
   proposer: { id: number, fullName: string },
   vendor?: { id: number, fullName: string },
-  part?: {
-    name: string,
-    id: number,
-    model: { id: number; name: string };
-    make: { id: number; name: string };
-  },
+  part?: Part,
   comments?: Comment[]
 }
 interface OptionsStr {

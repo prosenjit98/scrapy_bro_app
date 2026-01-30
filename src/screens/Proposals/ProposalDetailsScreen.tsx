@@ -17,6 +17,7 @@ import MessageBubble from '@/components/Proposal/MessageBubble'
 import CreateOrderModal from '@/components/Order/CreateOrderModal'
 import { useCreateOrder } from '@/stores/hooks/useOrders' // optional if you have it
 import BargainingCard from '@/components/Proposal/BargainingCard'
+import MyNewHeader from '@/components/MyNewHeader'
 // import { api } from '@/services/apiClient'
 
 export type commentSchemaType = z.infer<typeof commentSchema>
@@ -145,18 +146,19 @@ const ProposalDetailsScreen = ({ route }: any) => {
   }
 
   return (
-    <MyFlatListLayout hasProfileLink={true} withBackButton={true} moduleName={moduleName}>
+    <View style={[styles.container]}>
+      <MyNewHeader withBackButton={true} title={moduleName} subtitle={proposal && `${moduleName} #${proposal?.id}`} />
       {isPending ? <ProposalSkeleton /> : <>
         {!proposal ? <NoData title="Cannot fetch data" description="Sorry server is unreachable we are not able to pull data from server" /> :
           <View style={{ flexGrow: 1, justifyContent: 'space-between' }}>
             <View style={{ flex: 1 }}>
+              <View style={{ paddingHorizontal: 8, marginBottom: 8, top: -40 }}>
+                {!!proposal.partId ?
+                  <BargainingCard item={proposal} actionButton={actionButton} />
+                  : <ProposalCard item={proposal} actionButton={actionButton} />
+                }
+              </View>
 
-              {!!proposal.partId ?
-                <BargainingCard item={proposal} actionButton={actionButton} />
-                : <ProposalCard
-                  item={proposal}
-                  actionButton={actionButton}
-                />}
 
               <FlatList
                 data={proposal.comments}
@@ -228,11 +230,15 @@ const ProposalDetailsScreen = ({ route }: any) => {
             />
           </View>
         }</>}
-    </MyFlatListLayout>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f9f9f9',
+  },
   modalBackdrop: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',
