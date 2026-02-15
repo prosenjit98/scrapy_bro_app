@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Image, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native'
 import { Button, Text } from 'react-native-paper'
 // import * as ImagePicker from 'react-native-image-picker'
 import { useInquiries } from '@/stores/hooks/useInquiries'
@@ -7,8 +7,8 @@ import ImageUploader from '@/components/ImageUploader'
 import { Image as ImageRes } from 'react-native-image-crop-picker';
 // import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons'
 import { AppTheme } from '@/theme'
-// import { useThemeStore } from '@/stores/themeStore'
-import MyLayout from '@/components/MyLayout'
+import { useThemeStore } from '@/stores/themeStore'
+import MyNewHeader from '@/components/MyNewHeader'
 import { useVehicles } from '@/stores/hooks/useVehicles'
 import useLoaderState from '@/stores/loaderState'
 import { SelectField, TextField } from '@/components/form'
@@ -33,7 +33,9 @@ const InquiryFormScreen = ({ navigation, route }: any) => {
   const vehicleFetching = modelFetching || makeFetching;
   const [images, setImages] = useState<string[]>(inquiry?.images || [])
   const [avatars, setAvatars] = useState<ImageRes[] | []>(inquiry?.images || [])
-  // const { colors } = useThemeStore().theme;
+  const { colors } = useThemeStore().theme;
+  //@ts-ignore
+  const styles = makeStyles(colors)
 
   const showLoader = React.useCallback(() => {
     useLoaderState.getState().show();
@@ -52,7 +54,7 @@ const InquiryFormScreen = ({ navigation, route }: any) => {
     }
   }, [vehicleFetching, showLoader]);
 
-  const { control, handleSubmit, reset } = useForm<InquiryFormValues>({
+  const { control, handleSubmit } = useForm<InquiryFormValues>({
     resolver: zodResolver(inquirySchema),
     defaultValues: {
       title: inquiry?.title || '',
@@ -92,68 +94,75 @@ const InquiryFormScreen = ({ navigation, route }: any) => {
   }
 
   return (
-    <MyLayout withBackButton={true} moduleName={'Inquiry'} hasProfileLink={true}>
-      <Text variant="headlineSmall" style={{ marginBottom: 12 }}>
-        {inquiry ? 'Edit Inquiry' : 'New Inquiry'}
-      </Text>
-
-      <TextField
-        control={control}
-        name="title"
-        label="Part Title"
-        placeholder="e.g., Front Bumper"
+    <View style={styles.container}>
+      <MyNewHeader
+        withBackButton={true}
+        title={inquiry ? 'Edit Inquiry' : 'New Inquiry'}
+        subtitle="Provide details to get better proposals"
       />
-      <TextField
-        control={control}
-        name="description"
-        label="Description"
-        multiline
-        numberOfLines={4}
-        placeholder="Describe what you’re looking for..."
-      />
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        <Text variant="titleMedium" style={styles.sectionTitle}>Inquiry Details</Text>
 
-      <SelectField
-        control={control}
-        name="vehicleMake"
-        label="Select Company"
-        options={vMakes ?? []}
-        searchable
-      />
-
-      <SelectField
-        control={control}
-        name="vehicleModel"
-        label="Select Model"
-        options={vModels ?? []}
-        searchable
-      />
-
-      <View style={{ marginVertical: 10 }}>
-        <ImageUploader
-          handlerOnSelect={handleSelectImage}
+        <TextField
+          control={control}
+          name="title"
+          label="Part Name"
+          placeholder="Enter part name"
+          fontIconName="wrench"
         />
-      </View>
+        <TextField
+          control={control}
+          name="description"
+          label="Description"
+          multiline
+          numberOfLines={4}
+          placeholder="Describe what you're looking for..."
+          fontIconName="file-document-outline"
+        />
 
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginVertical: 10 }}>
-        {images.map((uri, i) => (
-          <TouchableOpacity key={i}>
-            <Image
-              source={{ uri }}
-              style={{ width: 90, height: 90, margin: 5, borderRadius: 8 }}
-            />
-          </TouchableOpacity>
-        ))}
-      </View>
+        <SelectField
+          control={control}
+          name="vehicleModel"
+          label="Select Model"
+          options={vModels ?? []}
+          searchable
+        />
 
-      <Button
-        mode="contained"
-        onPress={handleSubmit(onSubmit)}
-        // disabled={!title || !(images.length > 0)}
-        loading={createPending || updatePending}
-      >
-        {inquiry ? 'Update Inquiry' : 'Create Inquiry'}
-      </Button>
-    </MyLayout>
+        <SelectField
+          control={control}
+          name="vehicleMake"
+          label="Select Company"
+          options={vMakes ?? []}
+          searchable
+        />
+
+        <View style={styles.uploaderWrapper}>
+          <ImageUploader
+            handlerOnSelect={handleSelectImage}
+          />
+        </View>
+
+        <View style={styles.imageGrid}>
+          {images.map((uri, i) => (
+            <TouchableOpacity key={i}>
+              <Image
+                source={{ uri }}
+                style={styles.imageThumb}
+              />
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        <Button
+          mode="contained"
+          onPress={handleSubmit(onSubmit)}
+          loading={createPending || updatePending}
+          style={styles.submitButton}
+        >
+          {inquiry ? 'Update Inquiry' : 'Create Inquiry'}
+        </Button>
+      </ScrollView>
+    </View>
   )
 }
 
@@ -161,13 +170,37 @@ export default InquiryFormScreen;
 
 const makeStyles = (colors: AppTheme['colors']) =>
   StyleSheet.create({
-    container: { flex: 1, justifyContent: 'space-between' },
-    top: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-    content: { width: 200, height: 200, borderRadius: 100, borderWidth: 1, borderColor: colors.primary, marginBottom: 20, backgroundColor: colors.backdrop },
-    header: { fontSize: 24, fontWeight: 'bold', paddingBottom: 20 },
-    dateWarper: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 35 },
-    selectDate: { paddingHorizontal: 15, paddingVertical: 5, backgroundColor: colors.primaryLight, borderWidth: 1, borderColor: colors.primary, borderRadius: 8, marginBottom: 10 },
-    selectDateText: { marginVertical: 6, marginHorizontal: 10, fontSize: 13 },
-    commentCont: { paddingTop: 10 },
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    content: {
+      paddingHorizontal: 16,
+      paddingTop: 8,
+      paddingBottom: 24,
+    },
+    sectionTitle: {
+      marginBottom: 12,
+      fontWeight: '600',
+      color: colors.text,
+    },
+    uploaderWrapper: {
+      marginVertical: 10,
+    },
+    imageGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      marginVertical: 10,
+      gap: 8,
+    },
+    imageThumb: {
+      width: 84,
+      height: 84,
+      borderRadius: 8,
+    },
+    submitButton: {
+      marginTop: 8,
+      borderRadius: 8,
+    },
   });
 

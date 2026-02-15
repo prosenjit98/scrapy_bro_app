@@ -1,9 +1,10 @@
 // src/screens/inquiry/components/InquiryCard.tsx
 import React from 'react'
 import { View, Image, StyleSheet, TouchableOpacity } from 'react-native'
-import { Avatar, Text, Card, IconButton } from 'react-native-paper'
-import dayjs from 'dayjs'
+import { Text, Card, IconButton } from 'react-native-paper'
+import Icon from '@react-native-vector-icons/material-design-icons'
 import { useThemeStore } from '@/stores/themeStore'
+import { AppTheme } from '@/theme'
 
 interface InquiryCardProps {
   inquiry: Inquiry
@@ -12,79 +13,14 @@ interface InquiryCardProps {
   onDelete?: () => void
 }
 
-const renderImages = (images: InquiryAttachment[]) => {
-  const displayedImages = images.slice(0, 4);
-  const extraCount = images.length - 4;
-  if (displayedImages.length === 0) return null;
-  return (
-    <View style={{ borderRadius: 10, overflow: 'hidden', marginTop: 5 }}>
-      {displayedImages.length === 1 && (
-        <Image
-          source={{ uri: displayedImages[0].file.url }}
-          style={{ width: '100%', height: 250, borderRadius: 8 }}
-        />
-      )}
-
-      {displayedImages.length === 2 && (
-        <View style={{ flexDirection: 'row', gap: 2 }}>
-          {displayedImages.map((file, idx) => (
-            <Image
-              key={idx}
-              source={{ uri: file.file.url }}
-              style={{ flex: 1, height: 200 }}
-            />
-          ))}
-        </View>
-      )}
-
-      {displayedImages.length === 3 && (
-        <View style={{ gap: 2 }}>
-          <View style={{ flexDirection: 'row', gap: 3 }}>
-            {displayedImages.slice(0, 2).map((file, idx) => (
-              <Image
-                key={idx}
-                source={{ uri: file.file.url }}
-                style={{ flex: 1, height: 150 }}
-              />
-            ))}
-          </View>
-          <Image
-            source={{ uri: displayedImages[2].file.url }}
-            style={{ width: '100%', height: 150 }}
-          />
-        </View>
-      )}
-
-      {displayedImages.length >= 4 && (
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 2 }}>
-          {displayedImages.map((file, idx) => (
-            <View key={idx} style={{ width: '49%', height: 150 }}>
-              <Image
-                source={{ uri: file.file.url }}
-                style={{ width: '100%', height: '100%', borderRadius: 4 }}
-              />
-              {idx === 3 && extraCount > 0 && (
-                <View
-                  style={{
-                    ...StyleSheet.absoluteFill,
-                    backgroundColor: 'rgba(0,0,0,0.5)',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    borderRadius: 4,
-                  }}
-                >
-                  <Text style={{ color: 'white', fontSize: 24, fontWeight: 'bold' }}>
-                    +{extraCount}
-                  </Text>
-                </View>
-              )}
-            </View>
-          ))}
-        </View>
-      )}
-    </View>
-  );
-};
+const getStatusConfig = (status?: string | null) => {
+  if (!status) return { label: 'Pending', color: '#f59e0b', text: '#7c2d12' }
+  const normalized = status.toLowerCase()
+  if (normalized.includes('accept')) return { label: 'Accepted', color: '#10b981', text: '#065f46' }
+  if (normalized.includes('reject') || normalized.includes('cancel')) return { label: 'Rejected', color: '#ef4444', text: '#7f1d1d' }
+  if (normalized.includes('pending')) return { label: 'Pending', color: '#f59e0b', text: '#7c2d12' }
+  return { label: status.charAt(0).toUpperCase() + status.slice(1), color: '#6b7280', text: '#111827' }
+}
 
 export const InquiryCard: React.FC<InquiryCardProps> = ({
   inquiry,
@@ -93,81 +29,156 @@ export const InquiryCard: React.FC<InquiryCardProps> = ({
   onDelete,
 }) => {
   const theme = useThemeStore().theme
+  const { colors } = theme
+  //@ts-ignore
+  const styles = makeStyles(colors)
+  const status = getStatusConfig(inquiry.status)
+  const imageUrl = inquiry.attachments?.[0]?.file?.url
+  const proposalsCount = inquiry.proposalsCount ?? inquiry.proposals?.length ?? 0
 
   return (
     <TouchableOpacity activeOpacity={0.9} onPress={onPress}>
       <Card style={styles.card}>
-        <Card.Title
-          title={inquiry.user?.fullName || 'Anonymous User'}
-          subtitle={dayjs(inquiry.createdAt).format('DD/MM/YYYY')}
-          left={() => (
-            <Avatar.Image
-              size={42}
-              source={
-                require('@/assets/images/avatar.png')
-              }
-            />
-          )}
-          right={() => (
-            <View style={{ flexDirection: 'row' }}>
-              <IconButton icon="pencil" size={18} onPress={onEdit} />
-              {onDelete && <IconButton icon="delete" size={18} onPress={onDelete} />}
+        <View style={styles.row}>
+          <View style={styles.imageWrapper}>
+            {imageUrl ? (
+              <Image source={{ uri: imageUrl }} style={styles.image} />
+            ) : (
+              <View style={styles.imagePlaceholder}>
+                <Icon name="image-off-outline" size={20} color={colors.onSurfaceVariant} />
+              </View>
+            )}
+          </View>
+
+          <View style={styles.content}>
+            <View style={styles.titleRow}>
+              <Text variant="titleMedium" style={styles.title} numberOfLines={1}>
+                {inquiry.title}
+              </Text>
+              <View style={styles.actions}>
+                {onEdit && (
+                  <IconButton
+                    icon="pencil"
+                    size={18}
+                    onPress={(e) => {
+                      e.stopPropagation()
+                      onEdit()
+                    }}
+                  />
+                )}
+                {onDelete && (
+                  <IconButton
+                    icon="delete"
+                    size={18}
+                    onPress={(e) => {
+                      e.stopPropagation()
+                      onDelete()
+                    }}
+                  />
+                )}
+              </View>
             </View>
-          )}
-        />
-        <Card.Content>
-          <Text variant="titleMedium" style={styles.title}>
-            {inquiry.title}
-          </Text>
-          <Text
-            variant="bodyMedium"
-            style={[styles.description, { color: theme.colors.onSurfaceVariant }]}
-            numberOfLines={3}
-          >
-            {inquiry.partDescription}
-          </Text>
-        </Card.Content>
 
-        {inquiry.attachments && inquiry.attachments.length > 0 && (
-          <View>{renderImages(inquiry.attachments)}</View>
-        )}
+            <Text
+              variant="bodySmall"
+              style={[styles.description, { color: colors.onSurfaceVariant }]}
+              numberOfLines={2}
+            >
+              {inquiry.partDescription}
+            </Text>
 
-        <Card.Actions style={styles.actions}>
-          <IconButton icon="message-outline" size={20} />
-          <Text>{inquiry.proposalsCount ?? 0} Proposals</Text>
-        </Card.Actions>
+            <View style={styles.metaRow}>
+              <View style={[styles.statusBadge, { backgroundColor: status.color }]}>
+                <Text style={[styles.statusText, { color: status.text }]}>
+                  {status.label}
+                </Text>
+              </View>
+              <View style={styles.proposalsRow}>
+                <Icon name="message-outline" size={16} color={colors.onSurfaceVariant} />
+                <Text style={styles.proposalsText}>{proposalsCount} Proposals</Text>
+              </View>
+            </View>
+          </View>
+        </View>
       </Card>
-    </TouchableOpacity>
+    </TouchableOpacity >
   )
 }
 
-const styles = StyleSheet.create({
-  card: {
-    marginBottom: 12,
-    borderRadius: 12,
-    elevation: 2,
-  },
-  title: {
-    fontWeight: '600',
-    marginBottom: 4,
-  },
-  description: {
-    marginBottom: 8,
-  },
-  imageContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: 8,
-  },
-  image: {
-    width: '48%',
-    height: 150,
-    borderRadius: 8,
-    margin: '1%',
-  },
-  actions: {
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    paddingHorizontal: 8,
-  },
-})
+const makeStyles = (colors: AppTheme['colors']) =>
+  StyleSheet.create({
+    card: {
+      marginBottom: 12,
+      borderRadius: 12,
+      elevation: 2,
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+    },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+    },
+    imageWrapper: {
+      width: 64,
+      height: 64,
+      borderRadius: 8,
+      overflow: 'hidden',
+      backgroundColor: colors.surfaceVariant,
+    },
+    image: {
+      width: '100%',
+      height: '100%',
+      resizeMode: 'cover',
+    },
+    imagePlaceholder: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    content: {
+      flex: 1,
+    },
+    titleRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: 8,
+    },
+    title: {
+      fontWeight: '600',
+      flex: 1,
+    },
+    description: {
+      marginTop: 4,
+    },
+    actions: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginRight: -8,
+    },
+    metaRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginTop: 8,
+      gap: 12,
+    },
+    statusBadge: {
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: 10,
+    },
+    statusText: {
+      fontSize: 12,
+      fontWeight: '600',
+    },
+    proposalsRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+    },
+    proposalsText: {
+      fontSize: 12,
+      color: colors.onSurfaceVariant,
+    },
+  })

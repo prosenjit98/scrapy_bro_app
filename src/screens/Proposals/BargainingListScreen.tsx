@@ -26,6 +26,18 @@ const BargainingListScreen: React.FC<{}> = () => {
   const styles = makeStyles(colors);
   const { data, isLoading, refetch } = useMyBargain(user?.id, [{ key: 'userId', value: user?.id?.toString()! }, { key: 'withParts', value: 1 }]);
 
+  const filters = ['All', 'Pending', 'Accepted', 'Rejected']
+  const [filterStatus, setFilterStatus] = React.useState('All')
+
+  const getStatusLabel = (isSelfAccepted: boolean | null) => {
+    if (isSelfAccepted === null || isSelfAccepted === undefined) return 'Pending'
+    return isSelfAccepted ? 'Accepted' : 'Rejected'
+  }
+
+  const filteredOrders = filterStatus === 'All'
+    ? data
+    : data?.filter(o => getStatusLabel(o.isSelfAccepted) === filterStatus)
+
   if (isLoading) {
     return (
       <>
@@ -56,19 +68,6 @@ const BargainingListScreen: React.FC<{}> = () => {
       </>
     )
   }
-
-
-  const filters = ['All', 'Pending', 'Accepted', 'Rejected']
-  const [filterStatus, setFilterStatus] = React.useState('All')
-
-  const getStatusLabel = (isSelfAccepted: boolean | null) => {
-    if (isSelfAccepted === null || isSelfAccepted === undefined) return 'Pending'
-    return isSelfAccepted ? 'Accepted' : 'Rejected'
-  }
-
-  const filteredOrders = filterStatus === 'All'
-    ? data
-    : data?.filter(o => getStatusLabel(o.isSelfAccepted) === filterStatus)
 
   const filterComponent = () => {
 
