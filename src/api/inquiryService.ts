@@ -5,6 +5,11 @@ export const fetchMyInquiries = async () => {
   return data.data
 }
 
+export const fetchAllInquiries = async () => {
+  const { data } = await apiClientAxios.get('/inquiries?withAttachment=1&withProposals=1')
+  return data.data
+}
+
 export const fetchMyInquiry = async (id: number) => {
   const { data } = await apiClientAxios.get(`/inquiries/${id}`)
   return data.data as Inquiry

@@ -14,6 +14,7 @@ export type RootStackParamList = {
   [strings.part_details]: { partId: number };
   [strings.part_create]: undefined | { partId: number }
   [strings.vendor_order_details]: { orderId: number | string };
+  [strings.vendor_inquiry_detail]: { inquiryId: number | string };
 }
 
 export type TabParamList = {

@@ -26,6 +26,8 @@ export const part_details = 'PartDetails';
 
 export const vendor_root = 'VendorRoot';
 export const vendor_proposal = 'VendorProposal';
+export const vendor_inquiries = 'VendorInquiries';
+export const vendor_inquiry_detail = 'VendorInquiryDetail';
 export const vendor_parts = 'VendorParts';
 export const part_create = 'PartCreate';
 export const vendor_bargaining = 'VendorBargaining';
