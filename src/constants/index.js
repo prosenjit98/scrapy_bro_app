@@ -30,6 +30,7 @@ export const vendor_parts = 'VendorParts';
 export const part_create = 'PartCreate';
 export const vendor_bargaining = 'VendorBargaining';
 export const vendor_orders = 'VendorOrders';
+export const vendor_order_details = 'VendorOrderDetail';
 
 export const proposal_form = 'ProposalForm';
 

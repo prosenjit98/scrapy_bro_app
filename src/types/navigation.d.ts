@@ -13,6 +13,7 @@ export type RootStackParamList = {
   [strings.parts]: undefined;
   [strings.part_details]: { partId: number };
   [strings.part_create]: undefined | { partId: number }
+  [strings.vendor_order_details]: { orderId: number | string };
 }
 
 export type TabParamList = {
