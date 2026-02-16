@@ -1,6 +1,7 @@
 import { Dimensions, Platform } from 'react-native';
 
 export const VERSION_NO = '0.0.1';
+export const APP_NAME = 'Scrapy Bro';
 export const API_URL = 'http://10.0.2.2:3333/api/v1';
 
 // Navigation names

@@ -10,6 +10,7 @@ import { useSignin } from '@/stores/hooks/useSignin';
 import { useThemeStore } from '@/stores/themeStore';
 import { AppTheme } from '@/theme';
 import Icon from '@react-native-vector-icons/material-design-icons';
+import { useAuthStore } from '@/stores/authStore';
 
 
 type LoginForm = z.infer<typeof LoginSchema>;
@@ -22,6 +23,7 @@ const LoginScreen = ({ navigation }: any) => {
 
   const [role, setRole] = useState<'user' | 'vendor'>('user');
   const [showPassword, setShowPassword] = useState(false);
+  const { setLoginView } = useAuthStore();
 
   const { mutate, isPending } = useSignin();
 
@@ -32,6 +34,12 @@ const LoginScreen = ({ navigation }: any) => {
       password: '',
     },
   });
+
+  const switchUserRole = (newRole: 'user' | 'vendor') => {
+    setRole(newRole);
+    setLoginView(newRole) // Update the login view in the auth store
+  }
+
 
   const onSubmit = (data: LoginForm) => {
     // mutate({ ...data, role });
@@ -62,7 +70,7 @@ const LoginScreen = ({ navigation }: any) => {
                 styles.roleButton,
                 role === 'user' && styles.roleButtonActive,
               ]}
-              onPress={() => setRole('user')}
+              onPress={() => switchUserRole('user')}
             >
               <Text
                 style={[
@@ -78,7 +86,7 @@ const LoginScreen = ({ navigation }: any) => {
                 styles.roleButton,
                 role === 'vendor' && styles.roleButtonActive,
               ]}
-              onPress={() => setRole('vendor')}
+              onPress={() => switchUserRole('vendor')}
             >
               <Text
                 style={[

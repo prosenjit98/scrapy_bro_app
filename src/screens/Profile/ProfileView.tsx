@@ -1,5 +1,5 @@
-import React from 'react'
-import { View, StyleSheet, TouchableOpacity } from 'react-native'
+import React, { useMemo } from 'react'
+import { View, StyleSheet, TouchableOpacity, Alert } from 'react-native'
 import { Text } from 'react-native-paper'
 import { useThemeStore } from '@/stores/themeStore'
 import { AppTheme } from '@/theme'
@@ -9,7 +9,7 @@ import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RootStackParamList } from '@/types/navigation'
 import Icon, { MaterialDesignIconsIconName } from '@react-native-vector-icons/material-design-icons'
-import { profile_edit } from '@/constants'
+import { APP_NAME, profile_edit, VERSION_NO } from '@/constants'
 import MyNewHeader from '@/components/MyNewHeader'
 
 const ProfileView = () => {
@@ -19,18 +19,29 @@ const ProfileView = () => {
   const styles = makeStyles(colors)
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'Root'>>()
   const { profileQuery, invalidateProfile } = useProfile()
-  const { logout } = useAuthStore()
-  const { data: profile } = profileQuery()
+  const { logout, loginView, setLoginView } = useAuthStore()
+  const { data: profile } = profileQuery();
 
+  const switchAction = () => {
+    setLoginView(loginView === 'user' ? 'vendor' : 'user')
+    if (loginView === 'user') {
+      navigation.navigate('VendorRoot' as any)
+    } else {
+      navigation.navigate('Root' as any)
+    }
+    Alert.alert('Switched View', `You are now in ${loginView === 'user' ? 'Vendor' : 'User'} view`)
+  }
 
   const menuItems = [
-    { id: 1, label: 'Edit Profile', icon: 'pencil', action: () => navigation.navigate(profile_edit, { type: 'personal_info' }) },
-    { id: 2, label: 'My Orders', icon: 'shopping-bag', action: () => navigation.navigate('UserOrders' as any) },
-    { id: 3, label: 'My Inquiries', icon: 'comment-question', action: () => navigation.navigate('MyInquiry' as any) },
-    { id: 4, label: 'My Parts', icon: 'wrench', action: () => navigation.navigate('PartsList' as any) },
-    { id: 5, label: 'Settings', icon: 'cog', action: () => navigation.navigate('Settings' as any) },
-    { id: 6, label: 'Help & Support', icon: 'help-circle', action: () => navigation.navigate('Support' as any) },
+    { id: 2, label: 'Edit Profile', icon: 'pencil', action: () => navigation.navigate(profile_edit, { type: 'personal_info' }) },
+    { id: 3, label: 'Settings', icon: 'cog', action: () => navigation.navigate('Settings' as any) },
+    { id: 4, label: 'Help & Support', icon: 'help-circle', action: () => navigation.navigate('Support' as any) },
   ]
+  useMemo(() => {
+    if (profile?.role === 'vendor' && !menuItems.find(i => i.id === 1)) {
+      menuItems.unshift({ id: 1, label: `Switch To ${loginView === 'user' ? 'Vendor' : 'User'} View`, icon: 'swap-horizontal', action: switchAction })
+    }
+  }, [profile?.role, loginView])
 
   const handleLogout = () => {
     logout()
@@ -214,7 +225,7 @@ const ProfileView = () => {
 
       {/* App Info */}
       <View style={styles.appInfo}>
-        <Text style={styles.appVersion}>Scrapy v1.0.0</Text>
+        <Text style={styles.appVersion}>{APP_NAME} v{VERSION_NO}</Text>
         <Text style={styles.appCopyright}>© 2026 Scrapy. All rights reserved.</Text>
       </View>
     </View>

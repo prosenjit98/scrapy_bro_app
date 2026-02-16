@@ -14,6 +14,8 @@ type AuthState = {
   isFirstLaunch: boolean;
   checkFirstLaunch: () => Promise<void>;
   setUser: (user: User) => Promise<void>;
+  loginView: 'user' | 'vendor';
+  setLoginView: (view: 'user' | 'vendor') => void;
 };
 
 export const useAuthStore = create<AuthState>()(
@@ -23,6 +25,7 @@ export const useAuthStore = create<AuthState>()(
       isFirstLaunch: false,
       user: null,
       isLoading: true,
+      loginView: 'user',
       login: ({ user, token }) => {
         set({ token: token, user: user });
         setAuthToken(token);
@@ -47,6 +50,9 @@ export const useAuthStore = create<AuthState>()(
         } else {
           set({ isFirstLaunch: false })
         }
+      },
+      setLoginView: (view) => {
+        set({ loginView: view })
       }
     }),
     {

@@ -7,6 +7,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { InquiryStackParamList, RootStackParamList } from '@/types/navigation'
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons'
 import { useThemeStore } from '@/stores/themeStore'
+import { useAuthStore } from '@/stores/authStore'
 import EditProfileScreen from '@/screens/Profile/EditProfileScreen'
 import MyInquiryScreen from '@/screens/MyInquiries/MyInquiryScreen'
 import InquiryFormScreen from '@/screens/MyInquiries/InquiryFormScreen'
@@ -57,6 +58,7 @@ const VendorTabNavigator = () => {
     <Tab.Screen name={vendor_bargaining} component={ProposalListScreen} options={{ title: 'Buy Request', tabBarIcon: tabBarIcon('file-document') }} />
     <Tab.Screen name={vendor_parts} component={PartsVendorListScreen} options={{ title: 'Parts', tabBarIcon: tabBarIcon('wrench') }} />
     <Tab.Screen name={vendor_orders} component={PartsVendorListScreen} options={{ title: 'Orders', tabBarIcon: tabBarIcon('wrench') }} />
+    <Tab.Screen name={my_profile} component={ProfileScreen} options={{ tabBarIcon: tabBarIcon('account-circle') }} />
   </Tab.Navigator>)
 }
 
@@ -88,9 +90,14 @@ const TabStack = () => {
   )
 }
 
+const RootNavigator = () => {
+  const loginView = useAuthStore((s) => s.loginView)
+  return loginView === 'vendor' ? <VendorTabNavigator /> : <TabStack />
+}
+
 const MainAppStack = () => (
   <MainStack.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
-    <MainStack.Screen name="Root" component={TabStack} />
+    <MainStack.Screen name="Root" component={RootNavigator} />
     <MainStack.Screen name={profile_edit} component={EditProfileScreen} />
     <MainStack.Screen name={vendor_root} component={VendorTabNavigator} />
     <MainStack.Screen name={proposal_details} component={ProposalDetailsScreen} />

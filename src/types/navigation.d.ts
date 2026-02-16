@@ -3,7 +3,7 @@ import { NavigatorScreenParams } from '@react-navigation/native';
 
 
 export type RootStackParamList = {
-  Root: NavigatorScreenParams<TabParamList>;
+  Root: NavigatorScreenParams<TabParamList> | NavigatorScreenParams<VendorTabParam>;
   [strings.my_profile]: undefined;
   [strings.profile_edit]: { type: string; id?: number | string | undefined };
   [strings.vendor_root]: VendorTabParam;
