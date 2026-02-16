@@ -11,15 +11,18 @@ import { useNavigation } from '@react-navigation/native';
 
 
 
-const MyNewHeader: React.FC<ViewProps & { withBackButton?: boolean; title?: string, subtitle?: string }> = props => {
+const MyNewHeader: React.FC<ViewProps & { withBackButton?: boolean; title?: string, subtitle?: string; vendor?: boolean }> = props => {
   const theme = useThemeStore().theme;
   const { colors } = theme;
   //@ts-ignore
   const styles = makeStyles(colors);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'Root'>>();
+
+  const gradientColors = props.vendor ? ['#0a5e43', '#82c91f'] : ['#4f46e5', '#9333ea']
+
   return (
     <LinearGradient
-      colors={['#4f46e5', '#9333ea']}
+      colors={gradientColors}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}
       style={styles.headerSection}

@@ -20,6 +20,7 @@ import PartCreateScreen from '@/screens/Parts/PartCreateScreen'
 import PartDetailsScreen from '@/screens/Parts/PartDetailsScreen'
 // import UserProposalListScreen from '@/screens/Proposals/UserProposalListScreen'
 import BargainingListScreen from '@/screens/Proposals/BargainingListScreen'
+import VendorDashboardScreen from '@/screens/Vendor/VendorDashboardScreen'
 
 
 const Tab = createBottomTabNavigator()
@@ -54,10 +55,11 @@ const VendorTabNavigator = () => {
     },
     tabBarHideOnKeyboard: true,
   }}>
+    <Tab.Screen name="VendorDashboard" component={VendorDashboardScreen} options={{ title: 'Dashboard', tabBarIcon: tabBarIcon('view-dashboard') }} />
     <Tab.Screen name={vendor_proposal} component={ProposalListScreen} options={{ title: 'Proposal', tabBarIcon: tabBarIcon('file-document') }} />
     <Tab.Screen name={vendor_bargaining} component={ProposalListScreen} options={{ title: 'Buy Request', tabBarIcon: tabBarIcon('file-document') }} />
     <Tab.Screen name={vendor_parts} component={PartsVendorListScreen} options={{ title: 'Parts', tabBarIcon: tabBarIcon('wrench') }} />
-    <Tab.Screen name={vendor_orders} component={PartsVendorListScreen} options={{ title: 'Orders', tabBarIcon: tabBarIcon('wrench') }} />
+    {/* <Tab.Screen name={vendor_orders} component={PartsVendorListScreen} options={{ title: 'Orders', tabBarIcon: tabBarIcon('credit-card-clock') }} /> */}
     <Tab.Screen name={my_profile} component={ProfileScreen} options={{ tabBarIcon: tabBarIcon('account-circle') }} />
   </Tab.Navigator>)
 }

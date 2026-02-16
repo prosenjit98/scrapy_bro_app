@@ -63,7 +63,7 @@ export default function PartCreateScreen({ navigation, route }: any) {
     if (parts?.images && parts?.images?.length > 0) {
       let urls = parts.images.map((attach: any) => attach.file.url)
       setImages(images => [...images, ...urls])
-      setAvatars(parts.images as any[] || []);
+      // setAvatars(parts.images as any[] || []);
     }
   }, [parts?.images])
 

@@ -45,16 +45,22 @@ apiClientAxios.interceptors.request.use(
     }
     return config
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    console.error('❌ Request Error:', error)
+    return Promise.reject(error)
+  }
 )
 
 // ✅ Global error handler
 apiClientAxios.interceptors.response.use(
   (response) => {
+    console.log('✅ Response:', response.config.url)
+    console.log('📊 Status:', response.status)
     useLoaderState.getState().hide();
     return response
   },
   (error) => {
+    console.error('❌ Response Error:', error)
     // if status is 401, logout user
     if (error.response?.status === 401) {
       // handle logout logic here

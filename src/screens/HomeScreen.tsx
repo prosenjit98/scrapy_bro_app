@@ -113,13 +113,13 @@ export default function HomeScreen({ navigation }: any) {
       </ScrollView>
 
       {/* Vendor FAB */}
-      {user && user.role === 'vendor' && (
+      {/* {user && user.role === 'vendor' && (
         <FAB
           icon="plus"
           style={styles.fab}
           onPress={() => navigation.navigate(vendor_root)}
         />
-      )}
+      )} */}
     </View>
   );
 }
