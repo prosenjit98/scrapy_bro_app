@@ -7,6 +7,7 @@ export const fetchProposals = async () => {
 
 export const fetchMyProposal = async (id: number) => {
   const { data } = await apiClientAxios.get(`/proposals/${id}?withComments=1&withParts=1`)
+  console.log('Fetched Proposal:', data.data) // Debug log to check the response structure
   return data.data as Proposal
 }
 

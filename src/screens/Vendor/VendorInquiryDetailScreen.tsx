@@ -14,6 +14,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { AppTheme } from '@/theme'
 import MyNewHeader from '@/components/MyNewHeader'
 import ProposalFormContainer from '@/components/Proposal/ProposalFormContainer'
+import ProposalChatModal from '@/components/Proposal/ProposalChatModal'
 
 interface VendorInquiryDetailScreenProps {
   route: any
@@ -32,10 +33,20 @@ const VendorInquiryDetailScreen: React.FC<VendorInquiryDetailScreenProps> = ({
   const styles = makeStyles(colors)
   const { width } = Dimensions.get('window')
 
-  console.log(inquiry)
-
   const hasVendorProposal = inquiry.proposals?.some((p: Proposal) => p.proposerId === user?.id)
   const vendorProposal = inquiry.proposals?.find((p: Proposal) => p.proposerId === user?.id)
+
+  const [chatModalVisible, setChatModalVisible] = useState(false)
+
+  const handleOpenChat = () => {
+    if (vendorProposal) {
+      setChatModalVisible(true)
+    }
+  }
+
+  const handleCloseChat = () => {
+    setChatModalVisible(false)
+  }
 
   const getStatusLabel = (status?: string | null) => {
     if (!status) return 'Pending'
@@ -251,6 +262,19 @@ const VendorInquiryDetailScreen: React.FC<VendorInquiryDetailScreenProps> = ({
           />
         )}
 
+        {/* Chat Button if proposal exists */}
+        {hasVendorProposal && vendorProposal && (
+          <Button
+            mode="contained"
+            onPress={handleOpenChat}
+            style={[styles.createButton, { backgroundColor: colors.vendorPrimary }]}
+            icon="message"
+            contentStyle={{ height: 50 }}
+          >
+            Chat with Customer
+          </Button>
+        )}
+
         {!canCreateProposal() && !hasVendorProposal && (
           <View style={styles.closedMessage}>
             <Icon name="lock" size={24} color="#999" style={{ marginBottom: 8 }} />
@@ -258,6 +282,16 @@ const VendorInquiryDetailScreen: React.FC<VendorInquiryDetailScreenProps> = ({
           </View>
         )}
       </ScrollView>
+
+      {/* Chat Modal */}
+      {vendorProposal && (
+        <ProposalChatModal
+          visible={chatModalVisible}
+          onDismiss={handleCloseChat}
+          proposal={vendorProposal}
+          onProposalAccepted={handleCloseChat}
+        />
+      )}
     </View>
   )
 }
