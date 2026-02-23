@@ -9,7 +9,7 @@ import { useThemeStore } from '@/stores/themeStore'
 import Row from '../Row'
 import { AppTheme } from '@/theme'
 
-const BargainingCard: React.FC<{ item: Proposal; actionButton?: () => React.ReactNode }> = ({ item, actionButton }) => {
+const BargainingCard: React.FC<{ item: Bargain; actionButton?: () => React.ReactNode }> = ({ item, actionButton }) => {
   const { colors } = useThemeStore().theme
   //@ts-ignore
   const styles = makeStyles(colors)

@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { TextField } from '@/components/form/TextField'
 import { useSnackbarStore } from '@/stores/hooks/useSnackbarStore'
 import { useCreateProposal, useUpdateProposal } from '@/stores/hooks/useProposals'
+import { useCreateBargain, useUpdateBargain } from '@/stores/hooks/useBargains'
 import { proposalSchema } from '@/validation/proposalSchemas'
 import { Button } from 'react-native-paper'
 import { useAuthStore } from '@/stores/authStore'
@@ -30,27 +31,38 @@ export const ProposalForm: React.FC<ProposalFormProps> = ({
   const showSnackbar = useSnackbarStore.getState().showSnackbar
   const { user } = useAuthStore()
 
+  const createProposalMutation = useCreateProposal()
+  const updateProposalMutation = useUpdateProposal()
+  const createBargainMutation = useCreateBargain()
+  const updateBargainMutation = useUpdateBargain()
+
+  const isBargain = buttonLabel === 'Bargain'
+
   const { control, handleSubmit } = useForm<proposalSchemaType>({
     resolver: zodResolver(proposalSchema),
     defaultValues: proposal || { price: '', description: '', quantity: '1' },
   })
 
-  const createMutation = useCreateProposal()
-  const updateMutation = useUpdateProposal()
-
   const onSubmit = async (data: any) => {
     try {
-      if (proposal) {
-        await updateMutation.mutateAsync({ id: proposal.id, ...data })
-        showSnackbar('Proposal updated successfully', 'success')
+      if (isBargain) {
+        if (proposal) {
+          await updateBargainMutation.mutateAsync({ id: proposal.id, ...data })
+          showSnackbar('Bargain updated successfully', 'success')
+        } else {
+          const bargain_data = { part_id: relatedObjId, proposer_id: user?.id, ...data }
+          await createBargainMutation.mutateAsync(bargain_data)
+          showSnackbar('Bargain created successfully', 'success')
+        }
       } else {
-        let const_data
-        if (buttonLabel === 'Bargain')
-          const_data = { part_id: relatedObjId, proposer_id: user?.id, ...data }
-        else
-          const_data = { inquiry_id: relatedObjId, proposer_id: user?.id, ...data }
-        await createMutation.mutateAsync(const_data)
-        showSnackbar('Proposal created successfully', 'success')
+        if (proposal) {
+          await updateProposalMutation.mutateAsync({ id: proposal.id, ...data })
+          showSnackbar('Proposal updated successfully', 'success')
+        } else {
+          const proposal_data = { inquiry_id: relatedObjId, proposer_id: user?.id, ...data }
+          await createProposalMutation.mutateAsync(proposal_data)
+          showSnackbar('Proposal created successfully', 'success')
+        }
       }
       onSuccess?.()
     } catch (err: any) {
@@ -58,7 +70,9 @@ export const ProposalForm: React.FC<ProposalFormProps> = ({
     }
   }
 
-  const isLoading = createMutation.isPending || updateMutation.isPending
+  const isLoading = isBargain
+    ? (createBargainMutation.isPending || updateBargainMutation.isPending)
+    : (createProposalMutation.isPending || updateProposalMutation.isPending)
 
   return (
     <View>

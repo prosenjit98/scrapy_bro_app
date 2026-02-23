@@ -2,7 +2,7 @@ import React from 'react'
 import { View, FlatList, TouchableOpacity, Text, ScrollView, StyleSheet } from 'react-native'
 import { Card } from 'react-native-paper'
 
-import { useMyBargain } from '@/stores/hooks/useProposals'
+import { useMyBargains } from '@/stores/hooks/useBargains'
 import { NoData } from '@/components/NoData'
 import SkeletonBox from '@/components/SkeletonBox'
 import { useNavigation } from '@react-navigation/native'
@@ -24,7 +24,7 @@ const BargainingListScreen: React.FC<{}> = () => {
   const { colors } = useThemeStore().theme;
   //@ts-ignore
   const styles = makeStyles(colors);
-  const { data, isLoading, refetch } = useMyBargain(user?.id, [{ key: 'userId', value: user?.id?.toString()! }, { key: 'withParts', value: 1 }]);
+  const { data, isLoading, refetch } = useMyBargains(user?.id, [{ key: 'withComments', value: 1 }]);
 
   const filters = ['All', 'Pending', 'Accepted', 'Rejected']
   const [filterStatus, setFilterStatus] = React.useState('All')
