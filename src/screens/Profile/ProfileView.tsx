@@ -9,7 +9,7 @@ import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RootStackParamList } from '@/types/navigation'
 import Icon, { MaterialDesignIconsIconName } from '@react-native-vector-icons/material-design-icons'
-import { APP_NAME, profile_edit, VERSION_NO } from '@/constants'
+import { APP_NAME, profile_edit, vendor_proposal, VERSION_NO } from '@/constants'
 import MyNewHeader from '@/components/MyNewHeader'
 
 const ProfileView = () => {
@@ -40,6 +40,9 @@ const ProfileView = () => {
   useMemo(() => {
     if (profile?.role === 'vendor' && !menuItems.find(i => i.id === 1)) {
       menuItems.unshift({ id: 1, label: `Switch To ${loginView === 'user' ? 'Vendor' : 'User'} View`, icon: 'swap-horizontal', action: switchAction })
+    }
+    if (profile?.role === 'vendor' && !menuItems.find(i => i.id === 5)) {
+      menuItems.splice(1, 0, { id: 5, label: 'My Proposals', icon: 'file-document-outline', action: () => navigation.navigate(vendor_proposal as any) })
     }
   }, [profile?.role, loginView])
 

@@ -66,7 +66,7 @@ export const ProposalForm: React.FC<ProposalFormProps> = ({
       }
       onSuccess?.()
     } catch (err: any) {
-      showSnackbar(err.response?.data?.message || 'Error submitting proposal', 'error')
+      showSnackbar(err.response?.data?.message || 'Error submitting', 'error')
     }
   }
 

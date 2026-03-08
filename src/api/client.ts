@@ -4,7 +4,7 @@ import { useSnackbarStore } from "@/stores/hooks/useSnackbarStore";
 import useLoaderState from "@/stores/loaderState";
 import axios from "axios";
 
-export const BASE_URL = 'http://10.0.2.2:3333/api/v1';
+export const BASE_URL = 'http://192.168.29.168:3333/api/v1';
 
 let authToken: string | null = null;
 

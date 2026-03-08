@@ -2,7 +2,7 @@ import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import HomeScreen from '@/screens/HomeScreen'
 import ProfileScreen from '@/screens/Profile/ProfileScreen'
-import { bargaining, home, inquiries, my_inquiries, my_inquiry_details, my_orders, my_profile, new_inquiry, part_create, part_details, profile_edit, proposal_details, vendor_bargaining, vendor_inquiries, vendor_inquiry_detail, vendor_order_details, vendor_orders, vendor_parts, vendor_proposal, vendor_root } from '@/constants'
+import { bargain_details, bargaining, home, inquiries, my_inquiries, my_inquiry_details, my_orders, my_profile, new_inquiry, part_create, part_details, profile_edit, proposal_details, vendor_bargaining, vendor_inquiries, vendor_inquiry_detail, vendor_order_details, vendor_orders, vendor_parts, vendor_proposal, vendor_root } from '@/constants'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { InquiryStackParamList, RootStackParamList } from '@/types/navigation'
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons'
@@ -14,6 +14,8 @@ import InquiryFormScreen from '@/screens/MyInquiries/InquiryFormScreen'
 import InquiryDetailScreen from '@/screens/MyInquiries/InquiryDetailScreen'
 import ProposalListScreen from '@/screens/Proposals/VendorProposalsScreen'
 import ProposalDetailsScreen from '@/screens/Proposals/ProposalDetailsScreen'
+import VendorBargainsScreen from '@/screens/Vendor/VendorBargainsScreen'
+import BargainDetailsScreen from '@/screens/Proposals/BargainDetailsScreen'
 import UserOrdersScreen from '@/screens/Orders/UserOrdersScreen'
 import PartsVendorListScreen from '@/screens/Parts/PartsVendorListScreen'
 import PartCreateScreen from '@/screens/Parts/PartCreateScreen'
@@ -61,7 +63,7 @@ const VendorTabNavigator = () => {
   }}>
     <Tab.Screen name="VendorDashboard" component={VendorDashboardScreen} options={{ title: 'Dashboard', tabBarIcon: tabBarIcon('view-dashboard') }} />
     <Tab.Screen name={vendor_inquiries} component={VendorInquiriesScreen} options={{ title: 'Inquiries', tabBarIcon: tabBarIcon('clipboard-list') }} />
-    <Tab.Screen name={vendor_bargaining} component={ProposalListScreen} options={{ title: 'Buy Request', tabBarIcon: tabBarIcon('file-document') }} />
+    <Tab.Screen name={vendor_bargaining} component={VendorBargainsScreen} options={{ title: 'Buy Request', tabBarIcon: tabBarIcon('file-document') }} />
     {/* <Tab.Screen name={vendor_parts} component={PartsVendorListScreen} options={{ title: 'Parts', tabBarIcon: tabBarIcon('wrench') }} /> */}
     <Tab.Screen name={vendor_orders} component={VendorOrdersScreen} options={{ title: 'Orders', tabBarIcon: tabBarIcon('credit-card-clock') }} />
     <Tab.Screen name={my_profile} component={ProfileScreen} options={{ tabBarIcon: tabBarIcon('account-circle') }} />
@@ -107,10 +109,12 @@ const MainAppStack = () => (
     <MainStack.Screen name={profile_edit} component={EditProfileScreen} />
     <MainStack.Screen name={vendor_root} component={VendorTabNavigator} />
     <MainStack.Screen name={proposal_details} component={ProposalDetailsScreen} />
+    <MainStack.Screen name={bargain_details} component={BargainDetailsScreen} />
     <MainStack.Screen name={part_create} component={PartCreateScreen} />
     <MainStack.Screen name={part_details} component={PartDetailsScreen} />
     <MainStack.Screen name={vendor_order_details} component={VendorOrderDetailScreen} />
     <MainStack.Screen name={vendor_inquiry_detail} component={VendorInquiryDetailScreen} />
+    <MainStack.Screen name={vendor_proposal} component={ProposalListScreen} />
   </MainStack.Navigator>
 )
 

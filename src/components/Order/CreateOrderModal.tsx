@@ -4,6 +4,7 @@ import { useAuthStore } from '@/stores/authStore'
 
 type CreateOrderForm = {
   proposalId?: string
+  bargainId?: string
   vendorId?: number
   price?: string
   quantity?: string
@@ -16,6 +17,7 @@ type Props = {
   defaultValues?: Partial<CreateOrderForm>
   onSubmit: (payload: {
     proposalId?: string
+    bargainId?: string
     vendorId?: number
     userId: number | undefined
     totalPrice: number
@@ -29,6 +31,7 @@ type Props = {
 const CreateOrderModal = ({ visible, onDismiss, defaultValues = {}, onSubmit, loading = false, title = 'Create Order' }: Props) => {
   const { user } = useAuthStore()
   const [proposalId, setProposalId] = useState(defaultValues.proposalId ?? '')
+  const [bargainId, setBargainId] = useState(defaultValues.bargainId ?? '')
   const [vendorId, setVendorId] = useState(defaultValues.vendorId ? String(defaultValues.vendorId) : '')
   const [price, setPrice] = useState(defaultValues.price ?? '')
   const [quantity, setQuantity] = useState(defaultValues.quantity ?? '1')
@@ -39,6 +42,7 @@ const CreateOrderModal = ({ visible, onDismiss, defaultValues = {}, onSubmit, lo
   useEffect(() => {
     if (visible) {
       setProposalId(defaultValues.proposalId ?? '')
+      setBargainId(defaultValues.bargainId ?? '')
       setVendorId(defaultValues.vendorId ? String(defaultValues.vendorId) : '')
       setPrice(defaultValues.price ?? '')
       setQuantity(defaultValues.quantity ?? '1')
@@ -79,6 +83,7 @@ const CreateOrderModal = ({ visible, onDismiss, defaultValues = {}, onSubmit, lo
     try {
       await onSubmit({
         proposalId: proposalId || undefined,
+        bargainId: bargainId || undefined,
         vendorId: vendorId ? Number(vendorId) : undefined,
         userId: user?.id,
         totalPrice: parsedPrice,

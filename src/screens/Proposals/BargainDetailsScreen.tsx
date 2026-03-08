@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
 import { View, Text, Button, FlatList, Modal, TextInput, TouchableOpacity, StyleSheet } from 'react-native'
 import MyFlatListLayout from '@/components/MyFlatListLayout'
-import { useCreateComment, useGetProposal, useUpdateStatus } from '@/stores/hooks/useProposals'
+import { useGetBargain, useCreateBargainComment, useUpdateBargainStatus } from '@/stores/hooks/useBargains'
 import { NoData } from '@/components/NoData'
 import ProposalSkeleton from '@/components/Proposal/InquirySkeleton'
-import ProposalCard from '@/components/Proposal/ProposalCard'
 import Row from '@/components/Row'
 import { useSnackbarStore } from '@/stores/hooks/useSnackbarStore'
 import { useForm } from 'react-hook-form'
@@ -15,51 +14,46 @@ import { useAuthStore } from '@/stores/authStore'
 import { ChatInput } from '@/components/ChatInput'
 import MessageBubble from '@/components/Proposal/MessageBubble'
 import CreateOrderModal from '@/components/Order/CreateOrderModal'
-import { useCreateOrder } from '@/stores/hooks/useOrders' // optional if you have it
+import { useCreateOrder } from '@/stores/hooks/useOrders'
 import BargainingCard from '@/components/Proposal/BargainingCard'
 import MyNewHeader from '@/components/MyNewHeader'
-// import { api } from '@/services/apiClient'
 
 export type commentSchemaType = z.infer<typeof commentSchema>
 
-const ProposalDetailsScreen = ({ route }: any) => {
-  const { proposalId } = route.params
+const BargainDetailsScreen = ({ route }: any) => {
+  const { bargainId } = route.params
   const { user } = useAuthStore()
-  const { data: proposal, refetch, isPending } = useGetProposal(proposalId)
-  const { mutate: createComment, isPending: loadingComment } = useCreateComment({ proposalId })
-  const { mutate: updateStatus } = useUpdateStatus({ proposalId })
+  const { data: bargain, refetch, isPending } = useGetBargain(bargainId)
+  const { mutate: createComment, isPending: loadingComment } = useCreateBargainComment({ bargainId })
+  const { mutate: updateStatus } = useUpdateBargainStatus({ bargainId })
   const showSnackbar = useSnackbarStore.getState().showSnackbar
   const [modalVisible, setModalVisible] = useState(false)
   const [modalType, setModalType] = useState<'accept' | 'reject' | null>(null)
   const [price, setPrice] = useState('')
 
-  const moduleName = !!proposal ? !!proposal.partId ? 'Bargaining Details' : 'Proposal Details' : 'Details'
-
   const { control, handleSubmit, reset } = useForm<commentSchemaType>({
     resolver: zodResolver(commentSchema),
-    defaultValues: { proposalId: proposalId, content: '', userId: user?.id },
+    defaultValues: { bargainId, content: '', userId: user?.id },
   })
 
   const handleCreateComment = async (data: any) => {
     try {
-      createComment({ id: proposalId, formData: data })
+      createComment({ id: bargainId, formData: data })
       showSnackbar('Comment added successfully', 'success')
     } catch (err: any) {
       showSnackbar(err.response?.data?.message || 'Error submitting comment', 'error')
     }
   }
 
-
   const handleStatus = async (status: 'accepted' | 'rejected', payload?: any) => {
     try {
-      // send additional payload (e.g. price) when accepting
       let modified_status = status === 'accepted' ? true : false
-      if (user?.id === proposal?.proposerId)
+      if (user?.id === bargain?.proposerId)
         updateStatus({ is_self_accepted: modified_status, ...payload })
-      else if (user?.id === proposal?.vendorId)
+      else if (user?.id === bargain?.vendorId)
         updateStatus({ is_other_accepted: modified_status, ...payload })
     } catch (e) {
-      showSnackbar('Error updating proposal status', 'error')
+      showSnackbar('Error updating bargain status', 'error')
     }
   }
 
@@ -96,19 +90,17 @@ const ProposalDetailsScreen = ({ route }: any) => {
   const closeCreateOrder = () => setOrderModalVisible(false)
 
   const createOrderHandler = async (payload: any) => {
-    // If you have a hook: useCreateOrder
     if (createOrderAsync) {
       await createOrderAsync({
         userId: payload.userId,
-        proposalId: payload.proposalId,
+        bargainId: bargainId,
         totalPrice: payload.totalPrice,
         quantity: payload.quantity,
         unitPrice: payload.unitPrice,
         vendorId: payload.vendorId,
-        orderableType: 'proposals',
-        orderableId: proposalId,
+        orderableType: 'bargains',
+        orderableId: bargainId,
       })
-      // optionally refetch orders/proposal after success
       refetch()
       showSnackbar('Order created', 'success')
       return
@@ -117,13 +109,12 @@ const ProposalDetailsScreen = ({ route }: any) => {
   }
 
   const createOrder = async () => {
-    // open modal instead of placeholder
     openCreateOrder()
   }
 
   const actionButton = () => {
-    if (!proposal) return null
-    if ((proposal.isSelfAccepted === null && (user?.id === proposal.proposerId)) || (user?.id === proposal.vendorId)) {
+    if (!bargain) return null
+    if ((bargain.isSelfAccepted === null && (user?.id === bargain.proposerId)) || (user?.id === bargain.vendorId)) {
       return (
         <Row style={{ justifyContent: 'space-around', marginVertical: 10 }}>
           <Button title="Accept" color="#2a9d8f" onPress={() => openModal('accept')} />
@@ -131,13 +122,13 @@ const ProposalDetailsScreen = ({ route }: any) => {
         </Row>
       )
     }
-    if ((proposal.isSelfAccepted && !proposal.isOtherAccepted) || (!proposal.isSelfAccepted && proposal.isOtherAccepted)) {
+    if ((bargain.isSelfAccepted && !bargain.isOtherAccepted) || (!bargain.isSelfAccepted && bargain.isOtherAccepted)) {
       return (
         <View style={{ borderRadius: 8, marginTop: 4, overflow: 'hidden' }}>
           <Text style={{ alignSelf: 'center', marginVertical: 10, color: '#ffb703', fontWeight: '600' }}>Waiting for other party to respond</Text>
         </View>
       )
-    } else if (proposal.isSelfAccepted && proposal.isOtherAccepted && ((user?.id !== proposal.proposerId) || (user?.id === proposal.vendorId))) {
+    } else if (bargain.isSelfAccepted && bargain.isOtherAccepted && ((user?.id !== bargain.proposerId) || (user?.id === bargain.vendorId))) {
       return (
         <View style={{ borderRadius: 8, marginTop: 4, overflow: 'hidden' }}>
           <Button title="Create Order" color="#2a9d8f" onPress={createOrder} />
@@ -149,21 +140,17 @@ const ProposalDetailsScreen = ({ route }: any) => {
 
   return (
     <View style={[styles.container]}>
-      <MyNewHeader withBackButton={true} title={moduleName} subtitle={proposal && `${moduleName} #${proposal?.id}`} />
+      <MyNewHeader withBackButton={true} title="Bargain Details" subtitle={bargain && `Bargain #${bargain?.id}`} />
       {isPending ? <ProposalSkeleton /> : <>
-        {!proposal ? <NoData title="Cannot fetch data" description="Sorry server is unreachable we are not able to pull data from server" /> :
+        {!bargain ? <NoData title="Cannot fetch data" description="Sorry server is unreachable we are not able to pull data from server" /> :
           <View style={{ flexGrow: 1, justifyContent: 'space-between' }}>
             <View style={{ flex: 1 }}>
               <View style={{ paddingHorizontal: 8, marginBottom: 8, top: -40 }}>
-                {!proposal.partId ?
-                  <ProposalCard item={proposal} actionButton={actionButton} />
-                  : <div />
-                }
+                <BargainingCard item={bargain} actionButton={actionButton} />
               </View>
 
-
               <FlatList
-                data={proposal.comments}
+                data={bargain.comments}
                 keyExtractor={(item: Comment) => item.id.toString()}
                 refreshing={isPending}
                 onRefresh={refetch}
@@ -195,8 +182,8 @@ const ProposalDetailsScreen = ({ route }: any) => {
                 <View style={styles.modalContainer}>
                   {modalType === 'accept' ? (
                     <>
-                      <Text style={styles.modalTitle}>Accept Proposal</Text>
-                      <Text style={styles.modalText}>Enter price to accept the proposal</Text>
+                      <Text style={styles.modalTitle}>Accept Bargain</Text>
+                      <Text style={styles.modalText}>Enter price to accept the bargain</Text>
                       <TextInput
                         value={price}
                         onChangeText={setPrice}
@@ -207,8 +194,8 @@ const ProposalDetailsScreen = ({ route }: any) => {
                     </>
                   ) : (
                     <>
-                      <Text style={styles.modalTitle}>Reject Proposal</Text>
-                      <Text style={styles.modalText}>Are you sure you want to reject this proposal? This action cannot be undone.</Text>
+                      <Text style={styles.modalTitle}>Reject Bargain</Text>
+                      <Text style={styles.modalText}>Are you sure you want to reject this bargain? This action cannot be undone.</Text>
                     </>
                   )}
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 16 }}>
@@ -226,7 +213,7 @@ const ProposalDetailsScreen = ({ route }: any) => {
             <CreateOrderModal
               visible={orderModalVisible}
               onDismiss={closeCreateOrder}
-              defaultValues={{ proposalId: proposalId, unitPrice: proposal?.price ? String(proposal.price) : undefined }}
+              defaultValues={{ bargainId: bargainId, unitPrice: bargain?.price ? String(bargain.price) : undefined }}
               onSubmit={createOrderHandler}
               loading={creatingOrder}
             />
@@ -279,4 +266,4 @@ const styles = StyleSheet.create({
   btnText: { color: '#333', fontWeight: '600' },
 })
 
-export default ProposalDetailsScreen
+export default BargainDetailsScreen

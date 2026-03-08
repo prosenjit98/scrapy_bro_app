@@ -4,7 +4,10 @@ interface Order {
   user: string
   vendorId: number;
   vendor: string;
-  proposalId: string;
+  proposalId?: string;
+  bargainId?: string;
+  orderableType?: 'proposals' | 'bargains';
+  orderableId?: number;
   price: number;
   totalPrice: number;
   quantity: number;
@@ -14,6 +17,12 @@ interface Order {
   updatedAt: Date;
   part?: Part;
   paymentMethod: 'credit_card' | 'paypal' | 'bank_transfer' | 'cash_on_delivery';
+  orderable?: {
+    type: string;
+    id: number;
+    price: number;
+    description: string;
+  };
 }
 
 interface CreateOrderPayload extends Order { }

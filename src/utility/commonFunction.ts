@@ -5,7 +5,7 @@ export const buildUrl = (props: { baseUrl: string, optionArr?: OptionsStr[] }) =
     return baseUrl
 
   if (optionArr && optionArr.length > 0)
-    baseUrl = baseUrl + '?'
+    baseUrl = baseUrl + (baseUrl.includes('?') ? '&' : '?')
 
   optionArr.forEach(element => {
     baseUrl = baseUrl + element.key + '=' + element.value.toString() + '&'

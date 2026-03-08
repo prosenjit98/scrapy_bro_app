@@ -1,78 +1,58 @@
-import React from 'react'
-import { View, FlatList, TouchableOpacity, Text, ScrollView, StyleSheet } from 'react-native'
+import React, { useState } from 'react'
+import { FlatList, TouchableOpacity, Text, View, ScrollView, StyleSheet } from 'react-native'
 import { Card } from 'react-native-paper'
-
-import { useMyBargains } from '@/stores/hooks/useBargains'
 import { NoData } from '@/components/NoData'
+import { useVendorBargains } from '@/stores/hooks/useBargains'
+import { useAuthStore } from '@/stores/authStore'
 import SkeletonBox from '@/components/SkeletonBox'
+import BargainingCard from '@/components/Proposal/BargainingCard'
+import MyNewHeader from '@/components/MyNewHeader'
+import { useThemeStore } from '@/stores/themeStore'
+import { AppTheme } from '@/theme'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RootStackParamList } from '@/types/navigation'
-import { useAuthStore } from '@/stores/authStore'
-import MyFlatListLayout from '@/components/MyFlatListLayout'
-import BargainingCard from '@/components/Proposal/BargainingCard'
-import ProposalFormContainer from '@/components/Proposal/ProposalFormContainer'
-import { useThemeStore } from '@/stores/themeStore'
-import Icon from '@react-native-vector-icons/material-design-icons'
-import MyNewHeader from '@/components/MyNewHeader'
-import { AppTheme } from '@/theme'
 import { bargain_details } from '@/constants'
 
-
-const BargainingListScreen: React.FC<{}> = () => {
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'Root'>>();
-  const user = useAuthStore((s) => s.user);
-  const { colors } = useThemeStore().theme;
+const VendorBargainsScreen = () => {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'Root'>>()
+  const { user } = useAuthStore()
+  const { colors } = useThemeStore().theme
   //@ts-ignore
-  const styles = makeStyles(colors);
-  const { data, isLoading, refetch } = useMyBargains(user?.id, [{ key: 'withComments', value: '1' }]);
+  const styles = makeStyles(colors)
+  const { data, isLoading, refetch } = useVendorBargains(user?.id!, [{ key: 'withComments', value: '1' }])
 
   const filters = ['All', 'Pending', 'Accepted', 'Rejected']
-  const [filterStatus, setFilterStatus] = React.useState('All')
+  const [filterStatus, setFilterStatus] = useState('All')
 
   const getStatusLabel = (isSelfAccepted: boolean | null) => {
     if (isSelfAccepted === null || isSelfAccepted === undefined) return 'Pending'
     return isSelfAccepted ? 'Accepted' : 'Rejected'
   }
 
-  const filteredOrders = filterStatus === 'All'
+  const filteredData = filterStatus === 'All'
     ? data
     : data?.filter(o => getStatusLabel(o.isSelfAccepted) === filterStatus)
 
   if (isLoading) {
     return (
-      <>
-        <Card>
-          <View style={{ padding: 16 }}>
+      <View style={styles.container}>
+        <MyNewHeader title="Buy Requests" subtitle="Bargains from users on your parts" />
+        {[1, 2, 3].map((i) => (
+          <Card key={i} style={{ margin: 8, padding: 16 }}>
             <SkeletonBox height={20} width="60%" />
             <SkeletonBox height={10} width="90%" />
             <SkeletonBox height={10} width="90%" />
-            <SkeletonBox height={10} width="90%" />
-          </View>
-        </Card>
-        <Card>
-          <View style={{ padding: 16 }}>
-            <SkeletonBox height={20} width="60%" />
-            <SkeletonBox height={10} width="90%" />
-            <SkeletonBox height={10} width="90%" />
-            <SkeletonBox height={10} width="90%" />
-          </View>
-        </Card>
-        <Card>
-          <View style={{ padding: 16 }}>
-            <SkeletonBox height={20} width="60%" />
-            <SkeletonBox height={10} width="90%" />
-            <SkeletonBox height={10} width="90%" />
-            <SkeletonBox height={10} width="90%" />
-          </View>
-        </Card>
-      </>
+          </Card>
+        ))}
+      </View>
     )
   }
 
-  const filterComponent = () => {
+  return (
+    <View style={styles.container}>
+      <MyNewHeader title="Buy Requests" withBackButton={true} subtitle="Bargains from users on your parts" vendor={true} />
 
-    return (
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -99,32 +79,33 @@ const BargainingListScreen: React.FC<{}> = () => {
           </TouchableOpacity>
         ))}
       </ScrollView>
-    )
-  }
 
-  return (
-    <View style={[styles.container]}>
-      <MyNewHeader withBackButton={true} title='My Bargaining' subtitle='Track all your bargaining status' />
-      {filterComponent()}
       <FlatList
-        data={filteredOrders}
+        data={filteredData}
         keyExtractor={(item) => item.id.toString()}
-        scrollEnabled={false}
         refreshing={isLoading}
         onRefresh={refetch}
-        ListEmptyComponent={<NoData title="No bargaining yet" description="Sorry No vendor have been sent any bargaining yet" />}
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingBottom: 16 }}
+        ListEmptyComponent={
+          <NoData
+            title="No buy requests yet"
+            description="No users have sent any bargains on your parts yet."
+            onRetry={refetch}
+            buttonLabel="Refresh"
+          />
+        }
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => { navigation.navigate(bargain_details, { bargainId: item.id }) }}>
+          <TouchableOpacity onPress={() => navigation.navigate(bargain_details, { bargainId: item.id })}>
             <BargainingCard item={item} />
           </TouchableOpacity>
         )}
       />
     </View>
-
   )
 }
-export default BargainingListScreen
 
+export default VendorBargainsScreen
 
 const makeStyles = (colors: AppTheme['colors']) =>
   StyleSheet.create({
@@ -163,5 +144,5 @@ const makeStyles = (colors: AppTheme['colors']) =>
     },
     filterButtonTextActive: {
       color: '#fff',
-    }
+    },
   })

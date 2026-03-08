@@ -7,7 +7,8 @@ export const proposalSchema = z.object({
 })
 
 export const commentSchema = z.object({
-  proposalId: z.number(),
+  bargainId: z.number().optional(),
+  proposalId: z.number().optional(),
   content: z.string(),
   userId: z.number()
 })

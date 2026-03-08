@@ -31,6 +31,8 @@ export const deleteProposal = async (id: string) => {
 }
 
 export const createComment = async ({ id, formData }: any) => {
+  // Add commentableType for proposals
+  formData.append('commentableType', 'proposals')
   const { data } = await apiClientAxios.post(`/proposals/${id}/comments`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   })

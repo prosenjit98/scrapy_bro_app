@@ -24,6 +24,7 @@ import { BuyNowModal } from '@/components/Order/BuyNowModal';
 import { NoData } from '@/components/NoData';
 import PartSkeleton from '@/components/Parts/PartSkeleton';
 import ProposalFormContainer from '@/components/Proposal/ProposalFormContainer';
+import { bargaining } from '@/constants';
 
 const { width } = Dimensions.get('window');
 
@@ -233,7 +234,7 @@ export default function PartDetailsScreen() {
         >
           Buy Now
         </Button>
-        <ProposalFormContainer mode="outlined" buttonLabel='Bargain' relatedObjId={part.id} onSuccessNavigation={() => navigation.navigate('Bargains' as any)} style={styles.negotiateButton} />
+        <ProposalFormContainer mode="outlined" buttonLabel='Bargain' relatedObjId={part.id} onSuccessNavigation={() => navigation.navigate(bargaining)} style={styles.negotiateButton} />
       </View>
 
       {/* Buy Now Modal */}
