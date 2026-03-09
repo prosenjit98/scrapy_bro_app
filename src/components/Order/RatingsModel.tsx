@@ -1,5 +1,5 @@
 import { useThemeStore } from "@/stores/themeStore"
-import { View, Modal, TouchableOpacity, StyleSheet, ScrollView, Alert, TextInput } from "react-native"
+import { View, Modal, TouchableOpacity, StyleSheet, ScrollView, Alert, TextInput, KeyboardAvoidingView, Platform } from "react-native"
 import { Text, Button } from "react-native-paper"
 import Icon from '@react-native-vector-icons/material-design-icons'
 import { AppTheme } from "@/theme"
@@ -20,14 +20,15 @@ const RatingModal = ({ visible, order, onDismiss, onSubmit }: any) => {
       return
     }
     onSubmit({ rating, review, order })
-    setRating(0)
-    setReview('')
   }
 
   return (
     <Modal visible={visible} transparent animationType="slide">
       <View style={styles.modalOverlay}>
-        <View style={styles.modalContent}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={styles.modalContent}
+        >
           {/* Header */}
           <View style={styles.modalHeader}>
             <View>
@@ -39,65 +40,68 @@ const RatingModal = ({ visible, order, onDismiss, onSubmit }: any) => {
             </TouchableOpacity>
           </View>
 
-          <ScrollView style={styles.modalBody}>
-            {/* Product Info */}
-            {order?.productImage && (
-              <View style={styles.modalProductInfo}>
-                <FastImage
-                  source={{ uri: order?.productImage }}
-                  style={styles.modalProductImage}
-                  resizeMode="cover"
-                />
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.modalProductName} numberOfLines={2}>{order?.productName}</Text>
-                  <Text style={styles.modalProductPrice}>₹{order?.totalPrice?.toFixed(2)}</Text>
+          <View style={{ flex: 1 }}>
+            <ScrollView bounces={false} contentContainerStyle={styles.modalBody}>
+              {/* Product Info */}
+              {order?.productImage && (
+                <View style={styles.modalProductInfo}>
+                  <FastImage
+                    source={{ uri: order?.productImage }}
+                    style={styles.modalProductImage}
+                    resizeMode="cover"
+                  />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.modalProductName} numberOfLines={2}>{order?.productName}</Text>
+                    <Text style={styles.modalProductPrice}>₹{Number(order?.totalPrice || 0).toFixed(2)}</Text>
+                  </View>
                 </View>
-              </View>
-            )}
-
-            {/* Rating Stars */}
-            <View style={styles.ratingSection}>
-              <Text style={styles.ratingLabel}>How would you rate this vendor?</Text>
-              <View style={styles.starsContainer}>
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <TouchableOpacity key={star} onPress={() => setRating(star)}>
-                    <Icon
-                      name={star <= rating ? 'star' : 'star-outline'}
-                      size={40}
-                      color={star <= rating ? '#fbbf24' : '#d1d5db'}
-                    />
-                  </TouchableOpacity>
-                ))}
-              </View>
-              {rating > 0 && (
-                <Text style={styles.ratingText}>
-                  {rating === 5 ? 'Excellent!' : rating === 4 ? 'Good' : rating === 3 ? 'Average' : rating === 2 ? 'Below Average' : 'Poor'}
-                </Text>
               )}
-            </View>
 
-            {/* Review Input */}
-            <View style={styles.reviewSection}>
-              <Text style={styles.reviewLabel}>Write a review (optional)</Text>
-              <TextInput
-                style={styles.reviewInput}
-                placeholder="Share your experience with this vendor..."
-                placeholderTextColor="#999"
-                multiline
-                numberOfLines={4}
-                value={review}
-                onChangeText={setReview}
-              />
-            </View>
-          </ScrollView>
+              {/* Rating Stars */}
+              <View style={styles.ratingSection}>
+                <Text style={styles.ratingLabel}>How would you rate this vendor?</Text>
+                <View style={styles.starsContainer}>
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <TouchableOpacity key={star} onPress={() => setRating(star)}>
+                      <Icon
+                        name={star <= rating ? 'star' : 'star-outline'}
+                        size={40}
+                        color={star <= rating ? '#fbbf24' : '#d1d5db'}
+                      />
+                    </TouchableOpacity>
+                  ))}
+                </View>
+                {rating > 0 && (
+                  <Text style={styles.ratingText}>
+                    {rating === 5 ? 'Excellent!' : rating === 4 ? 'Good' : rating === 3 ? 'Average' : rating === 2 ? 'Below Average' : 'Poor'}
+                  </Text>
+                )}
+              </View>
 
-          {/* Footer */}
-          <View style={styles.modalFooter}>
-            <Button mode="contained" style={{ flex: 1 }} onPress={handleSubmit}>
-              Submit Review
-            </Button>
+              {/* Review Input */}
+              <View style={styles.reviewSection}>
+                <Text style={styles.reviewLabel}>Write a review (optional)</Text>
+                <TextInput
+                  style={styles.reviewInput}
+                  placeholder="Share your experience with this vendor..."
+                  placeholderTextColor="#999"
+                  multiline
+                  numberOfLines={4}
+                  value={review}
+                  onChangeText={setReview}
+                />
+              </View>
+              {/* Footer */}
+              <View style={styles.modalFooter}>
+                <Button mode="contained" style={{ flex: 1 }} onPress={handleSubmit}>
+                  Submit Review
+                </Button>
+              </View>
+            </ScrollView>
           </View>
-        </View>
+
+
+        </KeyboardAvoidingView>
       </View>
     </Modal>
   )
@@ -118,6 +122,7 @@ const makeStyles = (colors: AppTheme['colors']) => (
         borderTopLeftRadius: 24,
         borderTopRightRadius: 24,
         height: '90%',
+        flexDirection: 'column',
       },
       modalHeader: {
         flexDirection: 'row',
@@ -139,13 +144,14 @@ const makeStyles = (colors: AppTheme['colors']) => (
         color: '#666',
       },
       modalBody: {
-        flex: 1,
         paddingHorizontal: 16,
         paddingVertical: 16,
       },
       modalFooter: {
+        flexShrink: 0,
         paddingHorizontal: 16,
         paddingVertical: 12,
+        paddingBottom: 24,
         borderTopWidth: 1,
         borderTopColor: '#f3f4f6',
       },

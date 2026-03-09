@@ -26,6 +26,8 @@ import PartSkeleton from '@/components/Parts/PartSkeleton';
 import ProposalFormContainer from '@/components/Proposal/ProposalFormContainer';
 import { bargaining, part_create } from '@/constants';
 import { useAuthStore } from '@/stores/authStore';
+import RatingModal from '@/components/Order/RatingsModel';
+import { useCreateVendorReview, useVendorReviews } from '@/stores/hooks/useVendorReviews';
 
 const { width } = Dimensions.get('window');
 
@@ -42,6 +44,10 @@ export default function PartDetailsScreen() {
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [buyNowModalVisible, setBuyNowModalVisible] = useState(false);
+  const [ratingModalVisible, setRatingModalVisible] = useState(false);
+
+  const { mutate: submitReview } = useCreateVendorReview(() => setRatingModalVisible(false));
+  const { data: reviewsData } = useVendorReviews(part?.vendor?.id);
 
 
   const createOrderHook: any = useCreateOrder();
@@ -183,11 +189,14 @@ export default function PartDetailsScreen() {
                 </View>
                 <View style={styles.vendorRating}>
                   <Icon name="star" size={14} color="#fbbf24" />
-                  <Text style={styles.ratingText}>4.8 Rating</Text>
+                  <Text style={styles.ratingText}>
+                    {part.vendor?.averageRating ? `${part.vendor.averageRating} Rating` : 'No ratings yet'}
+                    {part.vendor?.reviewsCount ? ` (${part.vendor.reviewsCount})` : ''}
+                  </Text>
                 </View>
               </View>
-              <Button mode="outlined" onPress={() => { }}>
-                View Profile
+              <Button mode="outlined" onPress={() => !isOwner && setRatingModalVisible(true)}>
+                {isOwner ? 'Your Store' : 'Rate Vendor'}
               </Button>
             </View>
           </LinearGradient>
@@ -222,6 +231,26 @@ export default function PartDetailsScreen() {
               </View>
             </View>
           </View>
+
+          {/* Reviews Summary */}
+          {reviewsData?.data && reviewsData.data.length > 0 && (
+            <View style={styles.descriptionSection}>
+              <Text style={styles.sectionTitle}>Recent Reviews</Text>
+              {reviewsData.data.slice(0, 3).map((review: any) => (
+                <View key={review.id} style={{ marginBottom: 12, padding: 12, backgroundColor: '#f9fafb', borderRadius: 8 }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+                    <Text style={{ fontWeight: '600', color: '#333', marginRight: 8 }}>{review.user?.fullName || 'User'}</Text>
+                    <View style={{ flexDirection: 'row' }}>
+                      {[1, 2, 3, 4, 5].map((s) => (
+                        <Icon key={s} name={s <= review.rating ? 'star' : 'star-outline'} size={12} color="#fbbf24" />
+                      ))}
+                    </View>
+                  </View>
+                  {review.comment ? <Text style={{ color: '#666', fontSize: 13 }}>{review.comment}</Text> : null}
+                </View>
+              ))}
+            </View>
+          )}
 
           {/* Spacing for bottom buttons */}
           <View style={{ height: 120 }} />
@@ -261,6 +290,16 @@ export default function PartDetailsScreen() {
         product={part}
         createOrderAsync={createOrderAsync}
         loading={creatingOrder}
+      />
+
+      {/* Rating Modal */}
+      <RatingModal
+        visible={ratingModalVisible}
+        order={{ vendor: part.vendor?.fullName, productName: part.name, totalPrice: part.price, productImage: imageUrls[0] }}
+        onDismiss={() => setRatingModalVisible(false)}
+        onSubmit={({ rating, review }: { rating: number; review: string }) => {
+          submitReview({ vendor_id: part.vendor?.id, rating, comment: review || undefined });
+        }}
       />
     </View>
   );

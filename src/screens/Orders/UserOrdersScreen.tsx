@@ -13,6 +13,7 @@ import TrackingModal from '@/components/Order/TrackingModel'
 import RatingModal from '@/components/Order/RatingsModel'
 import ContactModal from '@/components/Order/ContantModel'
 import OrderRow from '@/components/Order/OrderRow'
+import { useCreateVendorReview } from '@/stores/hooks/useVendorReviews'
 
 
 const UserOrdersScreen = () => {
@@ -27,6 +28,8 @@ const UserOrdersScreen = () => {
   const [trackingModalVisible, setTrackingModalVisible] = useState(false)
   const [contactModalVisible, setContactModalVisible] = useState(false)
   const [filterStatus, setFilterStatus] = useState('All')
+
+  const { mutate: submitReview } = useCreateVendorReview(() => setRatingModalVisible(false))
 
   const filters = ['All', 'Pending', 'Shipped', 'Delivered', 'Canceled']
 
@@ -50,9 +53,7 @@ const UserOrdersScreen = () => {
   }
 
   const handleSubmitRating = ({ rating, review, order }: any) => {
-    console.log('Review submitted:', { rating, review, orderId: order.id })
-    Alert.alert('Thank you for your review!')
-    setRatingModalVisible(false)
+    submitReview({ vendor_id: order.vendorId, rating, comment: review || undefined })
   }
 
   return (

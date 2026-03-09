@@ -15,6 +15,8 @@ interface Part {
     fullName: string;
     avatar?: string;
     location?: string;
+    averageRating?: number;
+    reviewsCount?: number;
   };
   condition: 'New' | 'Used' | 'Refurbished';
   images?: InquiryAttachment[];
