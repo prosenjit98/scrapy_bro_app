@@ -1,38 +1,51 @@
 import React from 'react'
-import { View, ScrollView, StyleSheet, FlatList, TouchableOpacity } from 'react-native'
-import { Card, Text, Divider } from 'react-native-paper'
+import { View, ScrollView, StyleSheet, FlatList, TouchableOpacity, RefreshControl } from 'react-native'
+import { Card, Text, ActivityIndicator } from 'react-native-paper'
 import { LinearGradient } from 'react-native-linear-gradient'
 import Icon, { MaterialDesignIconsIconName } from '@react-native-vector-icons/material-design-icons'
 import { useThemeStore } from '@/stores/themeStore'
 import { AppTheme } from '@/theme'
+import { useVendorDashboard } from '@/stores/hooks/useDashboard'
+import { useAuthStore } from '@/stores/authStore'
+import { statusConfig } from '@/constants'
 
 
+
+const formatTimeAgo = (dateStr: string) => {
+  try {
+    const diff = Date.now() - new Date(dateStr).getTime()
+    const mins = Math.floor(diff / 60000)
+    if (mins < 60) return `${mins}m ago`
+    const hours = Math.floor(mins / 60)
+    if (hours < 24) return `${hours}h ago`
+    const days = Math.floor(hours / 24)
+    return `${days}d ago`
+  } catch {
+    return ''
+  }
+}
 
 const VendorDashboardScreen = () => {
   const { theme } = useThemeStore()
+  const { user } = useAuthStore()
   // @ts-ignore
   const styles = makeStyles(theme.colors)
 
+  const { data, isPending, refetch } = useVendorDashboard()
+
   const stats = [
-    { label: 'Total Products', value: '24', icon: 'package-variant', color: '#3b82f6' },
-    { label: 'Active Orders', value: '8', icon: 'trending-up', color: '#10b981' },
-    { label: 'Inquiries', value: '12', icon: 'message-square', color: '#a855f7' },
-    { label: 'Rating', value: '4.5', icon: 'star', color: '#f59e0b' },
-  ]
-
-  const products = [
-    { id: 1, title: 'iPhone 12 Pro', price: 35000, views: 245, stock: true },
-    { id: 2, title: 'Dell XPS 15', price: 89900, views: 156, stock: true },
-    { id: 3, title: 'Samsung Galaxy S21', price: 42000, views: 312, stock: true },
-  ]
-
-  const activities = [
-    { id: 1, title: 'New Order', description: 'iPhone 12 Pro - ₹35,000', time: '2h ago', status: 'Confirmed', statusColor: '#10b981' },
-    { id: 2, title: 'New Inquiry', description: 'Dell XPS 15 - Question about warranty', time: '5h ago', status: 'Pending Response', statusColor: '#3b82f6' },
+    { label: 'Total Products', value: String(data?.stats.totalParts ?? 0), icon: 'package-variant', color: '#3b82f6' },
+    { label: 'Active Orders', value: String(data?.stats.activeOrders ?? 0), icon: 'trending-up', color: '#10b981' },
+    { label: 'Pending Proposals', value: String(data?.stats.pendingProposals ?? 0), icon: 'file-document-outline', color: '#a855f7' },
+    { label: 'Revenue', value: `₹${(data?.stats.totalRevenue ?? 0).toLocaleString()}`, icon: 'currency-inr', color: '#f59e0b' },
   ]
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <ScrollView
+      style={styles.container}
+      showsVerticalScrollIndicator={false}
+      refreshControl={<RefreshControl refreshing={isPending} onRefresh={refetch} />}
+    >
       {/* Header */}
       <LinearGradient
         colors={['#10b981', '#059669']}
@@ -44,7 +57,7 @@ const VendorDashboardScreen = () => {
           <View style={styles.headerTop}>
             <View>
               <Text style={styles.headerTitle}>Welcome back!</Text>
-              <Text style={styles.headerSubtitle}>Vendor Store</Text>
+              <Text style={styles.headerSubtitle}>{user?.fullName || 'Vendor Store'}</Text>
             </View>
             <TouchableOpacity style={styles.notificationButton}>
               <Icon name="bell" size={24} color="#fff" />
@@ -64,107 +77,131 @@ const VendorDashboardScreen = () => {
         </View>
       </LinearGradient>
 
-      <View style={styles.content}>
-        {/* Stats Grid */}
-        <View style={styles.statsGrid}>
-          {stats.map((stat) => (
-            <Card key={stat.label} style={styles.statCard}>
-              <View style={styles.statContent}>
-                <View style={[styles.statIcon, { backgroundColor: stat.color }]}>
-                  <Icon name={stat.icon as MaterialDesignIconsIconName} size={20} color="#fff" />
+      {isPending && !data ? (
+        <View style={{ padding: 40, alignItems: 'center' }}>
+          <ActivityIndicator size="large" />
+        </View>
+      ) : (
+        <View style={styles.content}>
+          {/* Stats Grid */}
+          <View style={styles.statsGrid}>
+            {stats.map((stat) => (
+              <Card key={stat.label} style={styles.statCard}>
+                <View style={styles.statContent}>
+                  <View style={[styles.statIcon, { backgroundColor: stat.color }]}>
+                    <Icon name={stat.icon as MaterialDesignIconsIconName} size={20} color="#fff" />
+                  </View>
+                  <Text style={styles.statValue}>{stat.value}</Text>
+                  <Text style={styles.statLabel}>{stat.label}</Text>
                 </View>
-                <Text style={styles.statValue}>{stat.value}</Text>
-                <Text style={styles.statLabel}>{stat.label}</Text>
+              </Card>
+            ))}
+          </View>
+
+          {/* Revenue Card */}
+          <LinearGradient
+            colors={['#4f46e5', '#9333ea']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.revenueCard}
+          >
+            <View style={styles.revenueTop}>
+              <View style={styles.revenueLabelContainer}>
+                <Icon name="currency-inr" size={16} color="#fff" />
+                <Text style={styles.revenueLabel}>Total Revenue</Text>
               </View>
-            </Card>
-          ))}
-        </View>
-
-        {/* Revenue Card */}
-        <LinearGradient
-          colors={['#4f46e5', '#9333ea']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={styles.revenueCard}
-        >
-          <View style={styles.revenueTop}>
-            <View style={styles.revenueLabelContainer}>
-              <Icon name="currency-inr" size={16} color="#fff" />
-              <Text style={styles.revenueLabel}>Total Revenue</Text>
             </View>
-            <View style={styles.revenueMonth}>
-              <Text style={styles.revenueMonthText}>This Month</Text>
-            </View>
-          </View>
-          <Text style={styles.revenueAmount}>₹45,680</Text>
-          <Text style={styles.revenueSubtext}>+12% from last month</Text>
-        </LinearGradient>
+            <Text style={styles.revenueAmount}>₹{(data?.stats.totalRevenue ?? 0).toLocaleString()}</Text>
+            <Text style={styles.revenueSubtext}>From completed orders</Text>
+          </LinearGradient>
 
-        {/* My Products */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>My Products</Text>
-            <TouchableOpacity>
-              <Text style={styles.viewAllButton}>View All</Text>
-            </TouchableOpacity>
-          </View>
+          {/* My Products */}
+          {data?.recentParts && data.recentParts.length > 0 && (
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>My Products</Text>
+              </View>
 
-          <FlatList
-            data={products}
-            keyExtractor={(item) => item.id.toString()}
-            scrollEnabled={false}
-            renderItem={({ item }) => (
-              <Card style={styles.productCard}>
-                <View style={styles.productContent}>
-                  <View style={styles.productImage} />
-                  <View style={styles.productInfo}>
-                    <Text style={styles.productTitle} numberOfLines={1}>
-                      {item.title}
-                    </Text>
-                    <Text style={styles.productPrice}>₹{item.price.toLocaleString()}</Text>
-                    <View style={styles.productMeta}>
-                      <View style={styles.metaItem}>
-                        <Icon name="eye" size={12} color="#666" />
-                        <Text style={styles.metaText}>{item.views} views</Text>
+              <FlatList
+                data={data.recentParts}
+                keyExtractor={(item) => item.id.toString()}
+                scrollEnabled={false}
+                renderItem={({ item }) => (
+                  <Card style={styles.productCard}>
+                    <View style={styles.productContent}>
+                      <View style={styles.productImage}>
+                        <Icon name="package-variant" size={32} color="#9ca3af" />
                       </View>
-                      <Text style={styles.metaDot}>•</Text>
-                      <Text style={[styles.metaText, { color: '#10b981' }]}>In Stock</Text>
+                      <View style={styles.productInfo}>
+                        <Text style={styles.productTitle} numberOfLines={1}>
+                          {item.name}
+                        </Text>
+                        <Text style={styles.productPrice}>₹{item.price.toLocaleString()}</Text>
+                        <View style={styles.productMeta}>
+                          {item.stock !== null && (
+                            <View style={styles.metaItem}>
+                              <Icon name="cube-outline" size={12} color="#666" />
+                              <Text style={styles.metaText}>{item.stock} in stock</Text>
+                            </View>
+                          )}
+                          <Text style={styles.metaDot}>•</Text>
+                          <Text style={[styles.metaText, { color: item.isAvailable ? '#10b981' : '#ef4444' }]}>
+                            {item.isAvailable ? 'Available' : 'Unavailable'}
+                          </Text>
+                        </View>
+                      </View>
                     </View>
-                  </View>
-                </View>
-              </Card>
-            )}
-          />
-        </View>
+                  </Card>
+                )}
+              />
+            </View>
+          )}
 
-        {/* Recent Activity */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Recent Activity</Text>
-          <FlatList
-            data={activities}
-            keyExtractor={(item) => item.id.toString()}
-            scrollEnabled={false}
-            renderItem={({ item }) => (
-              <Card style={styles.activityCard}>
-                <View style={styles.activityContent}>
-                  <View style={styles.activityMain}>
-                    <Text style={styles.activityTitle}>{item.title}</Text>
-                    <Text style={styles.activityDescription}>{item.description}</Text>
-                  </View>
-                  <Text style={styles.activityTime}>{item.time}</Text>
-                </View>
-                <View style={styles.statusBadgeContainer}>
-                  <View style={[styles.statusBadge, { backgroundColor: `${item.statusColor}20` }]}>
-                    <Text style={[styles.statusBadgeText, { color: item.statusColor }]}>
-                      {item.status}
-                    </Text>
-                  </View>
-                </View>
-              </Card>
-            )}
-          />
+          {/* Recent Orders */}
+          {data?.recentOrders && data.recentOrders.length > 0 && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Recent Orders</Text>
+              <FlatList
+                data={data.recentOrders}
+                keyExtractor={(item) => item.id.toString()}
+                scrollEnabled={false}
+                renderItem={({ item }) => {
+                  const sc = statusConfig(item.status)
+                  return (
+                    <Card style={styles.activityCard}>
+                      <View style={styles.activityContent}>
+                        <View style={styles.activityMain}>
+                          <Text style={styles.activityTitle}>Order #{item.id}</Text>
+                          <Text style={styles.activityDescription}>
+                            {item.user?.fullName ?? 'Customer'} — ₹{item.totalPrice?.toLocaleString()}
+                          </Text>
+                        </View>
+                        <Text style={styles.activityTime}>{formatTimeAgo(item.createdAt)}</Text>
+                      </View>
+                      <View style={styles.statusBadgeContainer}>
+                        <View style={[styles.statusBadge, { backgroundColor: `${sc.color}20` }]}>
+                          <Text style={[styles.statusBadgeText, { color: sc.color }]}>
+                            {sc.label}
+                          </Text>
+                        </View>
+                      </View>
+                    </Card>
+                  )
+                }}
+              />
+            </View>
+          )}
+
+          {!data?.recentOrders?.length && !data?.recentParts?.length && (
+            <View style={{ padding: 24, alignItems: 'center' }}>
+              <Icon name="store-outline" size={48} color="#9ca3af" />
+              <Text style={{ color: '#9ca3af', marginTop: 8, fontSize: 14 }}>
+                Start adding products and accepting orders!
+              </Text>
+            </View>
+          )}
         </View>
-      </View>
+      )}
     </ScrollView>
   )
 }
@@ -354,6 +391,8 @@ const makeStyles = (colors: AppTheme['colors']) => {
       height: 80,
       borderRadius: 8,
       backgroundColor: '#f3f4f6',
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     productInfo: {
       flex: 1,
