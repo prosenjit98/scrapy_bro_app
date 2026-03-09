@@ -64,7 +64,6 @@ const VendorTabNavigator = () => {
     <Tab.Screen name="VendorDashboard" component={VendorDashboardScreen} options={{ title: 'Dashboard', tabBarIcon: tabBarIcon('view-dashboard') }} />
     <Tab.Screen name={vendor_inquiries} component={VendorInquiriesScreen} options={{ title: 'Inquiries', tabBarIcon: tabBarIcon('clipboard-list') }} />
     <Tab.Screen name={vendor_bargaining} component={VendorBargainsScreen} options={{ title: 'Buy Request', tabBarIcon: tabBarIcon('file-document') }} />
-    {/* <Tab.Screen name={vendor_parts} component={PartsVendorListScreen} options={{ title: 'Parts', tabBarIcon: tabBarIcon('wrench') }} /> */}
     <Tab.Screen name={vendor_orders} component={VendorOrdersScreen} options={{ title: 'Orders', tabBarIcon: tabBarIcon('credit-card-clock') }} />
     <Tab.Screen name={my_profile} component={ProfileScreen} options={{ tabBarIcon: tabBarIcon('account-circle') }} />
   </Tab.Navigator>)
@@ -115,6 +114,7 @@ const MainAppStack = () => (
     <MainStack.Screen name={vendor_order_details} component={VendorOrderDetailScreen} />
     <MainStack.Screen name={vendor_inquiry_detail} component={VendorInquiryDetailScreen} />
     <MainStack.Screen name={vendor_proposal} component={ProposalListScreen} />
+    <MainStack.Screen name={vendor_parts} component={PartsVendorListScreen} />
   </MainStack.Navigator>
 )
 

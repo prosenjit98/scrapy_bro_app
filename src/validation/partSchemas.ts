@@ -6,6 +6,7 @@ const partSchema = z.object({
   price: z.string().min(1),
   condition: z.string().min(1),
   stock: z.string().min(0, 'Stock must be at least 0'),
+  category_id: z.number().min(1, 'Category is required').optional(),
   vehicle_model_id: z.number().min(1, 'Vehicle Model is required'),
   is_available: z.boolean(),
   vehicle_make_id: z.number().min(1, 'Vehicle Make is required'),

@@ -20,7 +20,7 @@ interface Part {
   images?: InquiryAttachment[];
   stock: number;
   model: { id: number; name: string };
-  make: { id: number; name: string };
+  make: { id: number; name: string; category?: { id: number; name: string } };
   isAvailable: boolean;
   category: {
     id: number;

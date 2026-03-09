@@ -3,7 +3,7 @@ import { View, ScrollView, TextInput, TouchableOpacity, StyleSheet, RefreshContr
 import { FAB, Text } from 'react-native-paper';
 import { useAuthStore } from '@/stores/authStore';
 import { useThemeStore } from '@/stores/themeStore';
-import { vendor_root } from '@/constants';
+import { part_create, vendor_root } from '@/constants';
 import Icon from '@react-native-vector-icons/material-design-icons';
 import { AppTheme } from '@/theme';
 import { useVendorParts } from '@/stores/hooks/useParts';
@@ -119,13 +119,12 @@ export default function PartsVendorListScreen({ navigation }: any) {
       </ScrollView>
 
       {/* Vendor FAB */}
-      {/* {user && user.role === 'vendor' && (
-        <FAB
-          icon="plus"
-          style={styles.fab}
-          onPress={() => navigation.navigate(vendor_root)}
-        />
-      )} */}
+      <FAB
+        icon="plus"
+        style={styles.fab}
+        color="#fff"
+        onPress={() => navigation.navigate(part_create)}
+      />
     </View>
   );
 }

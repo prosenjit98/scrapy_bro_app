@@ -24,7 +24,8 @@ import { BuyNowModal } from '@/components/Order/BuyNowModal';
 import { NoData } from '@/components/NoData';
 import PartSkeleton from '@/components/Parts/PartSkeleton';
 import ProposalFormContainer from '@/components/Proposal/ProposalFormContainer';
-import { bargaining } from '@/constants';
+import { bargaining, part_create } from '@/constants';
+import { useAuthStore } from '@/stores/authStore';
 
 const { width } = Dimensions.get('window');
 
@@ -32,6 +33,8 @@ export default function PartDetailsScreen() {
   const navigation = useNavigation<any>();
   const { params } = useRoute<any>();
   const { data: part, isLoading } = useGetPartDetails(params.partId);
+  const user = useAuthStore((s) => s.user);
+  const isOwner = user?.id === part?.vendor?.id;
   const theme = useThemeStore().theme;
   const { colors } = theme;
   //@ts-ignore
@@ -227,14 +230,27 @@ export default function PartDetailsScreen() {
 
       {/* Bottom Action Buttons */}
       <View style={styles.bottomActions}>
-        <Button
-          mode="contained"
-          style={styles.buyButton}
-          onPress={() => setBuyNowModalVisible(true)}
-        >
-          Buy Now
-        </Button>
-        <ProposalFormContainer mode="outlined" buttonLabel='Bargain' relatedObjId={part.id} onSuccessNavigation={() => navigation.navigate(bargaining)} style={styles.negotiateButton} />
+        {isOwner ? (
+          <Button
+            mode="contained"
+            style={styles.buyButton}
+            icon="pencil"
+            onPress={() => navigation.navigate(part_create, { partId: part.id })}
+          >
+            Edit Part
+          </Button>
+        ) : (
+          <>
+            <Button
+              mode="contained"
+              style={styles.buyButton}
+              onPress={() => setBuyNowModalVisible(true)}
+            >
+              Buy Now
+            </Button>
+            <ProposalFormContainer mode="outlined" buttonLabel='Bargain' relatedObjId={part.id} onSuccessNavigation={() => navigation.navigate(bargaining)} style={styles.negotiateButton} />
+          </>
+        )}
       </View>
 
       {/* Buy Now Modal */}

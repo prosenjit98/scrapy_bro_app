@@ -9,7 +9,7 @@ import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RootStackParamList } from '@/types/navigation'
 import Icon, { MaterialDesignIconsIconName } from '@react-native-vector-icons/material-design-icons'
-import { APP_NAME, profile_edit, vendor_proposal, VERSION_NO } from '@/constants'
+import { APP_NAME, profile_edit, vendor_parts, vendor_proposal, VERSION_NO } from '@/constants'
 import MyNewHeader from '@/components/MyNewHeader'
 
 const ProfileView = () => {
@@ -43,6 +43,9 @@ const ProfileView = () => {
     }
     if (profile?.role === 'vendor' && !menuItems.find(i => i.id === 5)) {
       menuItems.splice(1, 0, { id: 5, label: 'My Proposals', icon: 'file-document-outline', action: () => navigation.navigate(vendor_proposal as any) })
+    }
+    if (profile?.role === 'vendor' && !menuItems.find(i => i.id === 6)) {
+      menuItems.splice(2, 0, { id: 6, label: 'My Parts', icon: 'wrench', action: () => navigation.navigate(vendor_parts as any) })
     }
   }, [profile?.role, loginView])
 
