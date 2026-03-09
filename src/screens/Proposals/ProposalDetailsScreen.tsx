@@ -52,12 +52,13 @@ const ProposalDetailsScreen = ({ route }: any) => {
 
   const handleStatus = async (status: 'accepted' | 'rejected', payload?: any) => {
     try {
-      // send additional payload (e.g. price) when accepting
       let modified_status = status === 'accepted' ? true : false
-      if (user?.id === proposal?.proposerId)
-        updateStatus({ is_self_accepted: modified_status, ...payload })
-      else if (user?.id === proposal?.vendorId)
+      const isInquiryCreator = !!proposal?.inquiryUserId && user?.id === proposal?.inquiryUserId
+      const isProposer = user?.id === proposal?.proposerId
+      if (isInquiryCreator)
         updateStatus({ is_other_accepted: modified_status, ...payload })
+      else if (isProposer)
+        updateStatus({ is_self_accepted: modified_status, ...payload })
     } catch (e) {
       showSnackbar('Error updating proposal status', 'error')
     }
@@ -123,7 +124,20 @@ const ProposalDetailsScreen = ({ route }: any) => {
 
   const actionButton = () => {
     if (!proposal) return null
-    if ((proposal.isSelfAccepted === null && (user?.id === proposal.proposerId)) || (user?.id === proposal.vendorId)) {
+    const isInquiryCreator = !!proposal.inquiryUserId && user?.id === proposal.inquiryUserId
+    const isProposer = user?.id === proposal.proposerId
+
+    // Check if either party has rejected
+    if (proposal.isSelfAccepted === false || proposal.isOtherAccepted === false) {
+      return (
+        <View style={{ borderRadius: 8, marginTop: 4, overflow: 'hidden' }}>
+          <Text style={{ alignSelf: 'center', marginVertical: 10, color: '#e63946', fontWeight: '600' }}>Proposal Rejected</Text>
+        </View>
+      )
+    }
+
+    // Inquiry creator: can accept/reject when isOtherAccepted is null
+    if (isInquiryCreator && proposal.isOtherAccepted === null) {
       return (
         <Row style={{ justifyContent: 'space-around', marginVertical: 10 }}>
           <Button title="Accept" color="#2a9d8f" onPress={() => openModal('accept')} />
@@ -131,19 +145,50 @@ const ProposalDetailsScreen = ({ route }: any) => {
         </Row>
       )
     }
-    if ((proposal.isSelfAccepted && !proposal.isOtherAccepted) || (!proposal.isSelfAccepted && proposal.isOtherAccepted)) {
+
+    // Vendor: can accept/reject after inquiry creator accepted
+    if (isProposer && proposal.isOtherAccepted === true && proposal.isSelfAccepted === null) {
+      return (
+        <Row style={{ justifyContent: 'space-around', marginVertical: 10 }}>
+          <Button title="Accept" color="#2a9d8f" onPress={() => openModal('accept')} />
+          <Button title="Reject" color="#e63946" onPress={() => openModal('reject')} />
+        </Row>
+      )
+    }
+
+    // Waiting states
+    if (isInquiryCreator && proposal.isOtherAccepted === true && !proposal.isSelfAccepted) {
       return (
         <View style={{ borderRadius: 8, marginTop: 4, overflow: 'hidden' }}>
-          <Text style={{ alignSelf: 'center', marginVertical: 10, color: '#ffb703', fontWeight: '600' }}>Waiting for other party to respond</Text>
+          <Text style={{ alignSelf: 'center', marginVertical: 10, color: '#ffb703', fontWeight: '600' }}>Waiting for vendor to respond</Text>
         </View>
       )
-    } else if (proposal.isSelfAccepted && proposal.isOtherAccepted && ((user?.id !== proposal.proposerId) || (user?.id === proposal.vendorId))) {
+    }
+    if (isProposer && proposal.isOtherAccepted === null) {
+      return (
+        <View style={{ borderRadius: 8, marginTop: 4, overflow: 'hidden' }}>
+          <Text style={{ alignSelf: 'center', marginVertical: 10, color: '#ffb703', fontWeight: '600' }}>Waiting for customer to respond</Text>
+        </View>
+      )
+    }
+
+    // Both accepted: inquiry creator can create order
+    if (proposal.isSelfAccepted && proposal.isOtherAccepted && isInquiryCreator && !proposal.orderCreated) {
       return (
         <View style={{ borderRadius: 8, marginTop: 4, overflow: 'hidden' }}>
           <Button title="Create Order" color="#2a9d8f" onPress={createOrder} />
         </View>
       )
     }
+
+    if (proposal.isSelfAccepted && proposal.isOtherAccepted && proposal.orderCreated) {
+      return (
+        <View style={{ borderRadius: 8, marginTop: 4, overflow: 'hidden' }}>
+          <Text style={{ alignSelf: 'center', marginVertical: 10, color: '#10b981', fontWeight: '600' }}>Order Created</Text>
+        </View>
+      )
+    }
+
     return null
   }
 
@@ -226,7 +271,7 @@ const ProposalDetailsScreen = ({ route }: any) => {
             <CreateOrderModal
               visible={orderModalVisible}
               onDismiss={closeCreateOrder}
-              defaultValues={{ proposalId: proposalId, unitPrice: proposal?.price ? String(proposal.price) : undefined }}
+              defaultValues={{ proposalId: proposalId, unitPrice: proposal?.price ? String(proposal.price) : undefined, vendorId: proposal?.proposerId }}
               onSubmit={createOrderHandler}
               loading={creatingOrder}
             />

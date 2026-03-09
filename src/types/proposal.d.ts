@@ -11,8 +11,11 @@ interface Proposal {
   createdAt: string,
   updatedAt: string,
   inquiryId?: number,
+  inquiryUserId?: number,
+  orderCreated?: boolean,
   proposer: { id: number, fullName: string },
   vendor?: { id: number, fullName: string },
+  inquiry?: { id: number, userId: number },
   part?: Part,
   comments?: Comment[]
 }

@@ -30,6 +30,7 @@ const BargainDetailsScreen = ({ route }: any) => {
   const [modalVisible, setModalVisible] = useState(false)
   const [modalType, setModalType] = useState<'accept' | 'reject' | null>(null)
   const [price, setPrice] = useState('')
+  const isVendor = user?.id === bargain?.vendorId
 
   const { control, handleSubmit, reset } = useForm<commentSchemaType>({
     resolver: zodResolver(commentSchema),
@@ -93,13 +94,14 @@ const BargainDetailsScreen = ({ route }: any) => {
     if (createOrderAsync) {
       await createOrderAsync({
         userId: payload.userId,
-        bargainId: bargainId,
         totalPrice: payload.totalPrice,
         quantity: payload.quantity,
         unitPrice: payload.unitPrice,
-        vendorId: payload.vendorId,
+        vendorId: bargain.vendorId,
         orderableType: 'bargains',
         orderableId: bargainId,
+        paymentMethod: payload.paymentMethod,
+        deliveryAddress: payload.deliveryAddress,
       })
       refetch()
       showSnackbar('Order created', 'success')
@@ -114,7 +116,7 @@ const BargainDetailsScreen = ({ route }: any) => {
 
   const actionButton = () => {
     if (!bargain) return null
-    if ((bargain.isSelfAccepted === null && (user?.id === bargain.proposerId)) || (user?.id === bargain.vendorId)) {
+    if ((bargain.isSelfAccepted === null && (user?.id === bargain.proposerId)) || (isVendor && bargain.isOtherAccepted === null)) {
       return (
         <Row style={{ justifyContent: 'space-around', marginVertical: 10 }}>
           <Button title="Accept" color="#2a9d8f" onPress={() => openModal('accept')} />
@@ -128,10 +130,16 @@ const BargainDetailsScreen = ({ route }: any) => {
           <Text style={{ alignSelf: 'center', marginVertical: 10, color: '#ffb703', fontWeight: '600' }}>Waiting for other party to respond</Text>
         </View>
       )
-    } else if (bargain.isSelfAccepted && bargain.isOtherAccepted && ((user?.id !== bargain.proposerId) || (user?.id === bargain.vendorId))) {
+    } else if (bargain.isSelfAccepted && bargain.isOtherAccepted && ((user?.id === bargain.proposerId)) && !bargain.orderCreated) {
       return (
         <View style={{ borderRadius: 8, marginTop: 4, overflow: 'hidden' }}>
           <Button title="Create Order" color="#2a9d8f" onPress={createOrder} />
+        </View>
+      )
+    } else if (bargain.isSelfAccepted && bargain.isOtherAccepted && bargain.orderCreated) {
+      return (
+        <View style={{ borderRadius: 8, marginTop: 4, overflow: 'hidden', padding: 10, backgroundColor: '#10b98120' }}>
+          <Text style={{ textAlign: 'center', color: '#10b981', fontWeight: '600' }}>Order Created Successfully</Text>
         </View>
       )
     }

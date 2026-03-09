@@ -81,8 +81,8 @@ const ProposalChatModal: React.FC<ProposalChatModalProps> = ({
   }
 
   const handleAcceptProposal = () => {
-    if (user?.id !== currentProposal.proposerId) {
-      Alert.alert('Error', 'Only the inquiry creator can accept proposals')
+    if (!isInquiryCreator && !isVendor) {
+      Alert.alert('Error', 'You are not authorized to accept this proposal')
       return
     }
 
@@ -91,9 +91,11 @@ const ProposalChatModal: React.FC<ProposalChatModalProps> = ({
 
   const confirmAcceptProposal = () => {
     try {
-      const modified_status = true
+      const payload = isInquiryCreator
+        ? { is_other_accepted: true, price: currentProposal.price }
+        : { is_self_accepted: true, price: currentProposal.price }
       updateStatus(
-        { is_self_accepted: modified_status, price: currentProposal.price },
+        payload,
         {
           onSuccess: () => {
             showSnackbar('Proposal accepted successfully!', 'success')
@@ -117,9 +119,11 @@ const ProposalChatModal: React.FC<ProposalChatModalProps> = ({
 
   const confirmRejectProposal = () => {
     try {
-      const modified_status = false
+      const payload = isInquiryCreator
+        ? { is_other_accepted: false }
+        : { is_self_accepted: false }
       updateStatus(
-        { is_self_accepted: modified_status },
+        payload,
         {
           onSuccess: () => {
             showSnackbar('Proposal rejected', 'success')
@@ -136,22 +140,34 @@ const ProposalChatModal: React.FC<ProposalChatModalProps> = ({
     }
   }
 
-  const isInquiryCreator = user?.id === currentProposal.proposerId
-  const isVendor = user?.id === currentProposal.vendorId
-  const canAcceptOrReject = isInquiryCreator && currentProposal.isSelfAccepted === null
+  const isInquiryCreator = !!currentProposal.inquiryUserId && user?.id === currentProposal.inquiryUserId
+  const isVendor = user?.id === currentProposal.proposerId
+  // Inquiry creator can accept/reject when isOtherAccepted is null
+  // Vendor can accept/reject when isOtherAccepted is true and isSelfAccepted is null
+  const canAcceptOrReject =
+    (isInquiryCreator && currentProposal.isOtherAccepted === null) ||
+    (isVendor && currentProposal.isOtherAccepted === true && currentProposal.isSelfAccepted === null)
 
   const getProposalStatusText = () => {
     if (currentProposal.isSelfAccepted && currentProposal.isOtherAccepted) {
       return { text: 'Proposal Accepted by Both Parties', color: '#10b981', icon: 'check-circle' }
     }
-    if (currentProposal.isSelfAccepted && !currentProposal.isOtherAccepted) {
-      return { text: 'Waiting for Customer Response', color: '#f59e0b', icon: 'clock-outline' }
-    }
-    if (!currentProposal.isSelfAccepted && currentProposal.isOtherAccepted) {
-      return { text: 'Waiting for Your Response', color: '#f59e0b', icon: 'clock-outline' }
-    }
     if (currentProposal.isSelfAccepted === false || currentProposal.isOtherAccepted === false) {
       return { text: 'Proposal Rejected', color: '#ef4444', icon: 'close-circle' }
+    }
+    if (currentProposal.isOtherAccepted && !currentProposal.isSelfAccepted) {
+      // User accepted, waiting for vendor
+      if (isVendor) {
+        return { text: 'Customer accepted — your response needed', color: '#f59e0b', icon: 'clock-outline' }
+      }
+      return { text: 'Waiting for Vendor Response', color: '#f59e0b', icon: 'clock-outline' }
+    }
+    if (currentProposal.isOtherAccepted === null && currentProposal.isSelfAccepted === null) {
+      // Neither party has responded
+      if (isInquiryCreator) {
+        return { text: 'Your response needed', color: '#f59e0b', icon: 'clock-outline' }
+      }
+      return { text: 'Waiting for Customer Response', color: '#f59e0b', icon: 'clock-outline' }
     }
     return { text: 'Pending Approvals', color: '#6b7280', icon: 'help-circle' }
   }

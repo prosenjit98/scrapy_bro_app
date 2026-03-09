@@ -51,6 +51,8 @@ export const statusConfig = status => {
       return { color: '#ef4444', icon: 'close-circle', label: 'Canceled' };
     case 'pending':
       return { color: '#f59e0b', icon: 'clock-outline', label: 'Pending' };
+    case 'accepted':
+      return { color: '#2a9d8f', icon: 'handshake', label: 'Accepted' };
     case 'shipped':
       return { color: '#8b5cf6', icon: 'truck', label: 'Shipped' };
     default:

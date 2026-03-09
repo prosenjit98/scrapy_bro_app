@@ -10,13 +10,16 @@ const TrackingModal = ({ visible, order, onDismiss }: any) => {
   const styles = makeStyles(colors)
 
   const getTrackingSteps = (status: string) => {
+    const isDelivered = status === 'completed' || status === 'delivered'
     return [
       { label: 'Order Placed', status: 'completed' },
       { label: 'Confirmed', status: status === 'pending' ? 'pending' : 'completed' },
-      { label: 'Shipped', status: status === 'shipped' || status === 'completed' ? 'completed' : status === 'pending' ? 'inactive' : 'pending' },
-      { label: 'Delivered', status: status === 'completed' ? 'completed' : 'inactive' },
+      { label: 'Shipped', status: isDelivered ? 'completed' : status === 'shipped' ? 'pending' : 'inactive' },
+      { label: 'Delivered', status: isDelivered ? 'completed' : 'inactive' },
     ]
   }
+
+  console.log('Order status:', order?.status) // Debugging line to check order status
 
   return (
     <Modal visible={visible} transparent animationType="slide">

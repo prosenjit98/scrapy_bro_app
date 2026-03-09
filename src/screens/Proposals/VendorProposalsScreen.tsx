@@ -86,14 +86,19 @@ const ProposalListScreen = ({ navigation }: any) => {
                     <Text style={{ fontSize: 10, color: '#10b981', fontWeight: '600' }}>Accepted</Text>
                   </View>
                 )}
-                {item.isOtherAccepted === false && (
+                {(item.isSelfAccepted === false || item.isOtherAccepted === false) && (
                   <View style={{ backgroundColor: '#ef444420', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 }}>
                     <Text style={{ fontSize: 10, color: '#ef4444', fontWeight: '600' }}>Rejected</Text>
                   </View>
                 )}
-                {item.isSelfAccepted && !item.isOtherAccepted && item.isOtherAccepted !== false && (
+                {item.isOtherAccepted === true && item.isSelfAccepted === null && (
                   <View style={{ backgroundColor: '#f59e0b20', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 }}>
-                    <Text style={{ fontSize: 10, color: '#f59e0b', fontWeight: '600' }}>Pending</Text>
+                    <Text style={{ fontSize: 10, color: '#f59e0b', fontWeight: '600' }}>Your Response Needed</Text>
+                  </View>
+                )}
+                {item.isOtherAccepted === null && item.isSelfAccepted === null && (
+                  <View style={{ backgroundColor: '#6b728020', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 }}>
+                    <Text style={{ fontSize: 10, color: '#6b7280', fontWeight: '600' }}>Waiting for Customer</Text>
                   </View>
                 )}
               </View>

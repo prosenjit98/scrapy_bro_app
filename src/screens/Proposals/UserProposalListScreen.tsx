@@ -84,9 +84,14 @@ const UserProposalListScreen: React.FC<UserProposalListScreenProps> = ({ inquiry
                     <Text style={{ fontSize: 10, color: '#10b981', fontWeight: '600' }}>Accepted</Text>
                   </View>
                 )}
-                {item.isSelfAccepted === false && (
+                {(item.isSelfAccepted === false || item.isOtherAccepted === false) && (
                   <View style={{ backgroundColor: '#ef444420', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 }}>
                     <Text style={{ fontSize: 10, color: '#ef4444', fontWeight: '600' }}>Rejected</Text>
+                  </View>
+                )}
+                {item.isOtherAccepted === true && item.isSelfAccepted === null && (
+                  <View style={{ backgroundColor: '#f59e0b20', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 }}>
+                    <Text style={{ fontSize: 10, color: '#f59e0b', fontWeight: '600' }}>Waiting for Vendor</Text>
                   </View>
                 )}
               </View>

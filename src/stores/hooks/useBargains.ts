@@ -2,6 +2,7 @@ import apiClientAxios from '@/api/client'
 import { fetchMyBargain, createBargainComment } from '@/api/bargainService'
 import { buildUrl } from '@/utility/commonFunction'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useSnackbarStore } from './useSnackbarStore'
 
 export const useUserBargains = (userId: number, optionArr?: OptionsStr[]) => {
   return useQuery({
@@ -84,10 +85,18 @@ export const useUpdateBargain = () => {
 }
 
 export const useCreateBargainComment = ({ bargainId }: any) => {
+  const showSnackbar = useSnackbarStore.getState().showSnackbar
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: createBargainComment,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['bargain_by_id', bargainId] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['bargain_by_id', bargainId] })
+      showSnackbar('Comment added successfully', 'success')
+    },
+    onError: (error: any) => {
+      console.error('Error adding comment:', error)
+      showSnackbar('Failed to add comment', 'error')
+    },
   })
 }
 

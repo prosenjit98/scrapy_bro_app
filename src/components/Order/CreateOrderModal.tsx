@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Modal, View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native'
+import { Modal, View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, ScrollView } from 'react-native'
 import { useAuthStore } from '@/stores/authStore'
 
 type CreateOrderForm = {
@@ -23,6 +23,8 @@ type Props = {
     totalPrice: number
     quantity: number
     unitPrice?: number
+    paymentMethod: string
+    deliveryAddress: string
   }) => Promise<any> | void
   loading?: boolean
   title?: string
@@ -33,9 +35,11 @@ const CreateOrderModal = ({ visible, onDismiss, defaultValues = {}, onSubmit, lo
   const [proposalId, setProposalId] = useState(defaultValues.proposalId ?? '')
   const [bargainId, setBargainId] = useState(defaultValues.bargainId ?? '')
   const [vendorId, setVendorId] = useState(defaultValues.vendorId ? String(defaultValues.vendorId) : '')
-  const [price, setPrice] = useState(defaultValues.price ?? '')
+  const [price, setPrice] = useState(defaultValues.unitPrice ?? '')
   const [quantity, setQuantity] = useState(defaultValues.quantity ?? '1')
   const [unitPrice, setUnitPrice] = useState(defaultValues.unitPrice ?? '')
+  const [paymentMethod, setPaymentMethod] = useState<'COD' | 'UPI'>('COD')
+  const [deliveryAddress, setDeliveryAddress] = useState('')
 
   const [error, setError] = useState<string | null>(null)
 
@@ -47,6 +51,8 @@ const CreateOrderModal = ({ visible, onDismiss, defaultValues = {}, onSubmit, lo
       setPrice(defaultValues.price ?? '')
       setQuantity(defaultValues.quantity ?? '1')
       setUnitPrice(defaultValues.unitPrice ?? '')
+      setPaymentMethod('COD')
+      setDeliveryAddress('')
       setError(null)
     }
   }, [visible, defaultValues])
@@ -65,7 +71,7 @@ const CreateOrderModal = ({ visible, onDismiss, defaultValues = {}, onSubmit, lo
         setPrice('')
       }
     }
-  }, [unitPrice, quantity, defaultValues.price])
+  }, [unitPrice, quantity, defaultValues.unitPrice, defaultValues.price])
 
   const handleConfirm = async () => {
     setError(null)
@@ -80,6 +86,10 @@ const CreateOrderModal = ({ visible, onDismiss, defaultValues = {}, onSubmit, lo
       setError('Please enter a valid quantity')
       return
     }
+    if (!deliveryAddress.trim()) {
+      setError('Please enter a delivery address')
+      return
+    }
     try {
       await onSubmit({
         proposalId: proposalId || undefined,
@@ -89,6 +99,8 @@ const CreateOrderModal = ({ visible, onDismiss, defaultValues = {}, onSubmit, lo
         totalPrice: parsedPrice,
         quantity: parsedQuantity,
         unitPrice: parsedUnit,
+        paymentMethod,
+        deliveryAddress: deliveryAddress.trim(),
       })
       // keep closing decision to parent if they prefer; default to close on success
       onDismiss()
@@ -125,6 +137,31 @@ const CreateOrderModal = ({ visible, onDismiss, defaultValues = {}, onSubmit, lo
           <Text style={styles.label}>Unit Price</Text>
           <TextInput value={unitPrice} onChangeText={setUnitPrice} placeholder="0.00" style={styles.input} keyboardType="numeric" />
 
+          <Text style={styles.label}>Delivery Address</Text>
+          <TextInput
+            value={deliveryAddress}
+            onChangeText={setDeliveryAddress}
+            placeholder="Enter your delivery address"
+            style={[styles.input, { height: 60, textAlignVertical: 'top' }]}
+            multiline
+          />
+
+          <Text style={styles.label}>Payment Method</Text>
+          <View style={styles.paymentRow}>
+            <TouchableOpacity
+              style={[styles.paymentBtn, paymentMethod === 'COD' && styles.paymentBtnActive]}
+              onPress={() => setPaymentMethod('COD')}
+            >
+              <Text style={[styles.paymentBtnText, paymentMethod === 'COD' && styles.paymentBtnTextActive]}>Cash on Delivery</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.paymentBtn, paymentMethod === 'UPI' && styles.paymentBtnActive]}
+              onPress={() => setPaymentMethod('UPI')}
+            >
+              <Text style={[styles.paymentBtnText, paymentMethod === 'UPI' && styles.paymentBtnTextActive]}>UPI</Text>
+            </TouchableOpacity>
+          </View>
+
           {error ? <Text style={styles.error}>{error}</Text> : null}
 
           <View style={styles.row}>
@@ -144,6 +181,7 @@ const CreateOrderModal = ({ visible, onDismiss, defaultValues = {}, onSubmit, lo
 
 const styles = StyleSheet.create({
   backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' },
+  scrollContent: { justifyContent: 'center', alignItems: 'center', paddingVertical: 24, width: '110%' },
   container: { width: '92%', backgroundColor: '#fff', borderRadius: 8, padding: 16 },
   title: { fontSize: 18, fontWeight: '700', marginBottom: 12 },
   label: { fontSize: 13, color: '#444', marginTop: 8 },
@@ -154,6 +192,11 @@ const styles = StyleSheet.create({
   btnConfirm: { backgroundColor: '#2a9d8f' },
   btnText: { color: '#333', fontWeight: '600' },
   error: { color: '#e63946', marginTop: 8, fontSize: 13 },
+  paymentRow: { flexDirection: 'row', gap: 8, marginTop: 6 },
+  paymentBtn: { flex: 1, paddingVertical: 10, borderRadius: 6, backgroundColor: '#f3f4f6', alignItems: 'center' },
+  paymentBtnActive: { backgroundColor: '#2a9d8f' },
+  paymentBtnText: { fontWeight: '600', color: '#333' },
+  paymentBtnTextActive: { color: '#fff' },
 })
 
 export default CreateOrderModal
