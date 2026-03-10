@@ -169,10 +169,13 @@ const makeStyles = (colors: AppTheme['colors']) =>
       borderRadius: 8,
       marginTop: -25,
       flexGrow: 0,
+      minHeight: 55,
+      // overflow: 'visible',
     },
     filterContentContainer: {
       paddingHorizontal: 16,
       gap: 8,
+      alignItems: 'center',
     },
     filterButton: {
       paddingHorizontal: 16,

@@ -29,9 +29,7 @@ export const InquiryDetailScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerWrap}>
-        <MyNewHeader withBackButton={true} title="Inquiry Details" subtitle="Review inquiry and proposals" />
-      </View>
+
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.content}
@@ -40,6 +38,9 @@ export const InquiryDetailScreen = () => {
           <RefreshControl refreshing={isPending} onRefresh={handleRefetch} />
         }
       >
+        <View style={styles.headerWrap}>
+          <MyNewHeader withBackButton={true} title="Inquiry Details" subtitle="Review inquiry and proposals" />
+        </View>
         {inquiry ? (
           <>
             <Card style={styles.card}>

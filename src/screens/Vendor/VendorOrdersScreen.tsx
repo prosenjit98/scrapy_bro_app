@@ -435,6 +435,7 @@ const makeStyles = (colors: AppTheme['colors']) =>
       borderRadius: 8,
       marginTop: -25,
       flexGrow: 0,
+      minHeight: 55
     },
     filterContentContainer: {
       paddingHorizontal: 16,
